@@ -1,5 +1,4 @@
-import { IMAGES } from '@/assets/images';
-import { moderateScale } from '@/src/utils/deviceConfig';
+// import { IMAGES } from '@/assets/images';
 import React, { useEffect, useRef, useState } from 'react';
 import {
     Dimensions,
@@ -10,46 +9,20 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import { moderateScale } from '../../utils/deviceConfig';
+import { IMG } from '../../assets/qcImages/qxImages';
 
 const { width } = Dimensions.get('window');
 
-const DATA = [
-    {
-        id: '1',
-        title: '20% OFF DURING\nTHE WEEKEND',
-        image: IMAGES['carousal-img'],
-    },
-    {
-        id: '2',
-        title: 'Thinking Differently\nwith VR',
-        image: IMAGES['carousal-img'],
-    },
-    {
-        id: '3',
-        title: 'Upgrade Your\nExperience Now',
-        image: IMAGES['carousal-img'],
-    },
-    {
-        id: '4',
-        title: 'Upgrade Your\nExperience Now',
-        image: IMAGES['carousal-img'],
-    },
-    {
-        id: '5',
-        title: 'Upgrade Your\nExperience Now',
-        image: IMAGES['carousal-img'],
-    },
-];
-
 const ITEM_WIDTH = width;
 
-const CustomCarousel = () => {
+const CustomCarousel = ({ data }: any) => {
     const flatListRef = useRef<FlatList>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
         const interval = setInterval(() => {
-            const nextIndex = (currentIndex + 1) % DATA.length;
+            const nextIndex = (currentIndex + 1) % data.length;
             flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
             setCurrentIndex(nextIndex);
         }, 4000); // 4s interval
@@ -72,7 +45,7 @@ const CustomCarousel = () => {
                 </TouchableOpacity>
             </View>
             <View style={styles.right}>
-                <Image source={IMAGES['shadow-img']} style={styles.circle} resizeMode="contain" />
+                <Image source={IMG['QC-mart-logo']} style={styles.circle} resizeMode="contain" />
                 <Image source={item.image} style={styles.image} resizeMode="contain" />
             </View>
         </View>
@@ -82,7 +55,7 @@ const CustomCarousel = () => {
         <View>
             <FlatList
                 ref={flatListRef}
-                data={DATA}
+                data={data}
                 renderItem={renderItem}
                 horizontal
                 pagingEnabled
@@ -96,7 +69,7 @@ const CustomCarousel = () => {
                 }}
             />
             <View style={styles.dots}>
-                {DATA.map((_, idx) => (
+                {data.map((_, idx) => (
                     <View
                         key={idx}
                         style={[
@@ -120,9 +93,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#00214d',
         borderRadius: moderateScale(20),
         padding: moderateScale(20),
-        marginHorizontal: moderateScale(16),
+        marginRight: moderateScale(16),
         alignItems: 'center',
         justifyContent: 'space-between',
+        marginTop: moderateScale(16)
     },
     left: {
         flex: 1,
@@ -145,14 +119,14 @@ const styles = StyleSheet.create({
     },
     right: {
         alignItems: 'center',
-        borderWidth:2,
-        borderColor:'#000',
-        borderRadius:moderateScale(140)
+        borderWidth: 2,
+        borderColor: '#000',
+        borderRadius: moderateScale(140)
     },
     image: {
         width: moderateScale(136),
         height: moderateScale(140),
-        position:'absolute'
+        position: 'absolute'
     },
     circle: {
         width: moderateScale(140),
@@ -162,13 +136,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         marginTop: moderateScale(10),
+        position: 'absolute',
+        bottom: moderateScale(10),
+        right: 0,
+        left: 0
     },
     dot: {
-        width: moderateScale(8),
-        height: moderateScale(8),
+        width: moderateScale(5),
+        height: moderateScale(5),
         backgroundColor: '#ccc',
         borderRadius: moderateScale(4),
-        margin: moderateScale(4),
+        margin: moderateScale(2),
     },
     activeDot: {
         backgroundColor: '#97d700',

@@ -1,4 +1,3 @@
-import { moderateScale } from '@/src/utils/deviceConfig';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   StyleSheet,
@@ -6,13 +5,18 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  NativeSyntheticEvent,
+  TextInputFocusEventData,
 } from 'react-native';
+import { moderateScale } from '../../utils/deviceConfig';
 
 interface Props {
   length?: number;
   onOtpComplete?: (otp: string) => void;
   timerSeconds?: number;
-  onResend?: () => void; // optional callback to resend API
+  onResend?: () => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
 const OtpInput: React.FC<Props> = ({
@@ -20,6 +24,8 @@ const OtpInput: React.FC<Props> = ({
   onOtpComplete,
   timerSeconds = 30,
   onResend,
+  onFocus,
+  onBlur,
 }) => {
   const [otp, setOtp] = useState(Array(length).fill(''));
   const [timer, setTimer] = useState(timerSeconds);
@@ -36,24 +42,28 @@ const OtpInput: React.FC<Props> = ({
     return () => clearInterval(interval);
   }, [timer]);
 
-  // Call back when OTP is complete
+  // Call callback when OTP is complete
   useEffect(() => {
     if (otp.every(val => val !== '')) {
       onOtpComplete?.(otp.join(''));
     }
   }, [otp]);
 
-  const handleChange = (text: string, index: number) => {
-    if (!/^[0-9]?$/.test(text)) return;
+const handleChange = (text: string, index: number) => {
+  if (!/^[0-9]?$/.test(text)) return;
 
-    const newOtp = [...otp];
-    newOtp[index] = text;
-    setOtp(newOtp);
+  const newOtp = [...otp];
+  newOtp[index] = text;
+  setOtp(newOtp);
 
-    if (text && index < length - 1) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  };
+  // Move focus
+  if (text && index < length - 1) {
+    inputRefs.current[index + 1]?.focus();
+  }
+
+  // 🔥 Always notify parent with latest OTP
+  onOtpComplete?.(newOtp.join(''));
+};
 
   const handleKeyPress = (e: any, index: number) => {
     if (e.nativeEvent.key === 'Backspace') {
@@ -72,12 +82,19 @@ const OtpInput: React.FC<Props> = ({
     }
   };
 
-
   const handleResend = () => {
     setOtp(Array(length).fill(''));
     setTimer(timerSeconds);
     inputRefs.current[0]?.focus();
     onResend?.();
+  };
+
+  const handleInputFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>, index: number) => {
+    onFocus?.();
+  };
+
+  const handleInputBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>, index: number) => {
+    onBlur?.();
   };
 
   return (
@@ -94,6 +111,8 @@ const OtpInput: React.FC<Props> = ({
             onChangeText={text => handleChange(text, index)}
             onKeyPress={e => handleKeyPress(e, index)}
             returnKeyType="done"
+            onFocus={e => handleInputFocus(e, index)}
+            onBlur={e => handleInputBlur(e, index)}
           />
         ))}
       </View>
@@ -116,7 +135,6 @@ export default OtpInput;
 const styles = StyleSheet.create({
   wrapper: {
     alignItems: 'center',
-    marginTop: moderateScale(20),
   },
   row: {
     flexDirection: 'row',

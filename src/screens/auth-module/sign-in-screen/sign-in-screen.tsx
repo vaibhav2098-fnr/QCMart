@@ -7,6 +7,7 @@ import { styles } from "./sign-in-style";
 import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useNavigation } from "@react-navigation/native";
 
 // Validation schema
 const loginValidationSchema = Yup.object().shape({
@@ -19,6 +20,7 @@ const loginValidationSchema = Yup.object().shape({
 });
 
 const LoginScreen = () => {
+  const navigation = useNavigation()
   const [isCheck, setIsCheck] = useState(false);
 
   const formik = useFormik({
@@ -90,7 +92,7 @@ const LoginScreen = () => {
       <View style={styles.footer}>
         <Text style={styles.footerText}>
           Don’t have an account?{" "}
-          <Text onPress={() => console.log("Sign Up")} style={styles.signUpText}>
+          <Text onPress={() => navigation.navigate('signUp')} style={styles.signUpText}>
             Sign Up
           </Text>
         </Text>

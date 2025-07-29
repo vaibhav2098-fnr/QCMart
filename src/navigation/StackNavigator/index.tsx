@@ -1,6 +1,6 @@
-import { NativeStackNavigationOptions, createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import LoginScreen from '../../screens/auth-module/sign-in-screen/sign-in-screen';
+import { NativeStackNavigationOptions, createNativeStackNavigator } from '@react-navigation/native-stack';
+import { CategoryScreen, HomeScreen, LoginScreen, MostPopularScreen, OTPScreen, ProductDetailScreen, SignUpScreen } from '../../screens';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,6 +14,8 @@ export const AuthNavigator: React.FC = () => {
         } as NativeStackNavigationOptions
       }>
       <Stack.Screen name="login" component={LoginScreen} />
+      <Stack.Screen name="signUp" component={SignUpScreen} />
+      <Stack.Screen name="otp" component={OTPScreen} />
     </Stack.Navigator>
   );
 };
@@ -21,13 +23,16 @@ export const AuthNavigator: React.FC = () => {
 export const HomeNavigator: React.FC = () => {
   return (
     <Stack.Navigator
-      initialRouteName="login"
+      initialRouteName="home"
       screenOptions={
         {
           headerShown: false,
         } as NativeStackNavigationOptions
       }>
-      <Stack.Screen name="login" component={LoginScreen} />
+      <Stack.Screen name="home" component={HomeScreen} />
+      <Stack.Screen name="category" component={CategoryScreen} />
+      <Stack.Screen name="mostpopular" component={MostPopularScreen} />
+      <Stack.Screen name="productDetail" component={ProductDetailScreen} />
     </Stack.Navigator>
   );
 };

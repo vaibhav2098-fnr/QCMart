@@ -497,4 +497,5 @@ export const Icons = {
   "fi-rr-yen": require('./fi-rr-yen.png'),
   "fi-rr-zoom-in": require('./fi-rr-zoom-in.png'),
   "fi-rr-zoom-out": require('./fi-rr-zoom-out.png'),
+  "fi-sr-heart": require('./fi-sr-heart.png'),
 };

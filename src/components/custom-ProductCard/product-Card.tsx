@@ -1,9 +1,11 @@
-import { moderateScale } from '@/src/utils/deviceConfig';
-import { FontAwesome } from '@expo/vector-icons';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { moderateScale } from '../../utils/deviceConfig';
+import { Icons } from '../../assets/qcIcons/qcIcons';
 
-const ProductCard = ({ data }: any) => {
+const ProductCard = (props: any) => {
+    const navigation = useNavigation();
     const {
         title,
         price,
@@ -11,23 +13,29 @@ const ProductCard = ({ data }: any) => {
         offer,
         image,
         isFavorite,
-    } = data;
+        product,
+    } = props;
 
     return (
-        <TouchableOpacity style={styles.card}>
+        <TouchableOpacity 
+            style={styles.card}
+            onPress={() => (navigation as any).navigate('productDetail', { product: product || { title, price, oldPrice, offer, image, isFavorite } })}
+        >
             <View style={styles.imageContainer}>
                 <Image source={image} style={styles.productImage} resizeMode="contain" />
 
-                <TouchableOpacity style={styles.heartIcon}>
-                    <FontAwesome
-                        name="heart"
-                        size={18}
-                        color={isFavorite ? 'red' : '#ccc'}
-                    />
+                <TouchableOpacity 
+                    style={styles.heartIcon}
+                    onPress={(e) => {
+                        e.stopPropagation();
+                        // Handle favorite toggle
+                    }}
+                >
+                    <Image tintColor={isFavorite ? 'red' : '#ccc'} source={isFavorite ? Icons['fi-sr-heart'] : Icons['fi-rr-heart']} style={{ height: 18, width: 18, resizeMode: 'contain' }} />
                 </TouchableOpacity>
             </View>
 
-            {title ? <Text style={styles.title}>{title}</Text> : null}
+            {title ? <Text numberOfLines={2} style={styles.title}>{title}</Text> : null}
 
             <View style={styles.priceContainer}>
                 <Text style={styles.price}>₹{price}</Text>
@@ -44,16 +52,21 @@ export default ProductCard;
 
 const styles = StyleSheet.create({
     card: {
-        width: moderateScale(178),
-        height: moderateScale(228),
+        width: moderateScale(170),
+        height: moderateScale(230),
         backgroundColor: '#fff',
         borderRadius: moderateScale(12),
         margin: moderateScale(8),
         padding: moderateScale(10),
+
+        // iOS shadow
         shadowColor: '#000',
-        shadowOpacity: 0.05,
-        shadowRadius: 10,
-        elevation: 2,
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 4 },
+
+        // Android shadow
+        elevation: 6,
     },
     imageContainer: {
         position: 'relative',
@@ -84,12 +97,13 @@ const styles = StyleSheet.create({
         marginTop: moderateScale(10),
         fontWeight: '600',
         color: '#09090A',
-        lineHeight:20
+        lineHeight: 20
     },
     priceContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: moderateScale(6),
+        flexWrap:'wrap'
     },
     price: {
         fontSize: moderateScale(16),
