@@ -2,9 +2,9 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { moderateScale } from '../../utils/deviceConfig';
 
-const CategoryItem = ({ icon, title, onPress }: any) => {
+const CategoryItem = ({ icon, title, onPress, buttonStyle }: any) => {
     return (
-        <TouchableOpacity style={styles.item} onPress={onPress}>
+        <TouchableOpacity style={[styles.item ,buttonStyle]} onPress={onPress}>
             <View style={styles.iconWrapper}>
                 <Image source={icon} style={styles.icon} />
             </View>

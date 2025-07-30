@@ -1,14 +1,18 @@
 import React from 'react';
 import CustomHeader from '../../components/custom-header/custom-header';
-import { FlatList, SafeAreaView } from 'react-native';
+import { FlatList, SafeAreaView, View } from 'react-native';
 import { statusBarHeight } from '../../utils/helper';
 import { moderateScale } from '../../utils/deviceConfig';
 import { categoryData } from '../home-screen/dummy-data';
 import CategoryItem from '../../components/custom-category/custom-category';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/reducers';
+import { Icons } from '../../assets/qcIcons/qcIcons';
 
 const CategoryScreen = () => {
     const navigation = useNavigation();
+    const { productCategoriesData = [] } = useSelector((state: RootState) => state.productCategoriesDataReducer);
 
     return (
         <SafeAreaView
@@ -29,8 +33,8 @@ const CategoryScreen = () => {
 
             {/* 📋 Filtered FlatList */}
             <FlatList
-                data={categoryData}
-                keyExtractor={(item) => item.id.toString() + item.title}
+                data={productCategoriesData}
+                keyExtractor={(item) => item.id.toString() + item.name}
                 numColumns={4}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{
@@ -38,10 +42,10 @@ const CategoryScreen = () => {
                     paddingTop: moderateScale(8),
                 }}
                 columnWrapperStyle={{
-                    justifyContent: 'space-between',
+                    justifyContent: 'flex-start',
                 }}
                 renderItem={({ item }) => (
-                    <CategoryItem icon={item.icon} title={item.title} onPress={() => console.log(item.title)} />
+                    <CategoryItem buttonStyle={{ marginHorizontal: moderateScale(6) }} icon={item?.icon || Icons['fi-rr-camera']} title={item.name} onPress={() => console.log(item.name)} />
                 )}
             />
         </SafeAreaView>

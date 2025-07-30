@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import HomeHeader from './home-header/home-header';
 import { statusBarHeight } from '../../utils/helper';
@@ -15,9 +15,19 @@ import PromoBanner from './home-promo-banner/home-promo-banner';
 import SummerSaleBanner from './home-summerSaleBanner/home-summerSaleBanner';
 import { useNavigation } from '@react-navigation/native';
 import CategoryChips from '../../components/custom-Chips/category-Chips';
+import { useDispatch, useSelector } from 'react-redux';
+import { productCategoriesDataRequest } from '../../redux/reducers/product-categories';
+import { RootState } from '../../redux/reducers';
 
 const HomeScreen = () => {
   const navigation = useNavigation()
+  const dispatch = useDispatch()
+  const { productCategoriesData = [] } = useSelector((state: RootState) => state.productCategoriesDataReducer);
+
+  useEffect(() => {
+    dispatch(productCategoriesDataRequest({}));
+  }, [dispatch]);
+
   const [Search, setSearch] = useState('')
   return (
     <View style={{ flex: 1, marginTop: statusBarHeight, paddingHorizontal: moderateScale(16), backgroundColor: '#fff', marginVertical: moderateScale(16) }}>
@@ -38,8 +48,8 @@ const HomeScreen = () => {
         <HomeSeeAll title='Category' onPress={() => (navigation as any).navigate('category')} />
         <FlatList
           scrollEnabled={false}
-          data={categoryData}
-          keyExtractor={(item) => item.id.toString() + item.title}
+          data={productCategoriesData?.slice(0,8)}
+          keyExtractor={(item) => item.id.toString() + item.name}
           numColumns={4}
           contentContainerStyle={{
             paddingHorizontal: 12,
@@ -49,7 +59,7 @@ const HomeScreen = () => {
             justifyContent: 'space-between',
           }}
           renderItem={({ item }) => (
-            <CategoryItem icon={item.icon} title={item.title} onPress={() => console.log(item.title)} />
+            <CategoryItem icon={item?.icon || Icons['fi-rr-camera']} title={item.name} onPress={() => console.log(item.name)} />
           )}
         />
 
@@ -80,7 +90,7 @@ const HomeScreen = () => {
           )}
         />
 
-        <PromoBanner itemImg={products[0]?.image}/>
+        <PromoBanner itemImg={products[0]?.image} />
 
         <HomeSeeAll title='Featured products' onPress={() => console.log('Featured products')} />
         <FlatList

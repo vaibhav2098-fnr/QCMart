@@ -16,7 +16,7 @@ interface ApiCallOptions {
 
 export const apiCall = async ({
   method,
-  endpoint,
+  endpoint='',
   data = null,
   token = '',
   isMultipart = false,

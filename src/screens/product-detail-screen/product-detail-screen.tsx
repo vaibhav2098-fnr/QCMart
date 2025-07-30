@@ -30,7 +30,8 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route }) => {
   const [isFavorite, setIsFavorite] = useState(false);
 
   // Mock product data - in real app this would come from route params
-  const product = route?.params?.product || {
+  // const product = route?.params?.product || {
+    const product = {
     id: 1,
     title: 'HP 15, 13th Gen Intel Core i5-1335U',
     image: 'https://techterms.com/img/xl/laptop_586.png',
