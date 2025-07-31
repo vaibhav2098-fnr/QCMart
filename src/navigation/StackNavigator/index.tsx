@@ -1,6 +1,6 @@
 import React from 'react';
 import { NativeStackNavigationOptions, createNativeStackNavigator } from '@react-navigation/native-stack';
-import { CategoryScreen, HomeScreen, LoginScreen, MostPopularScreen, OTPScreen, ProductDetailScreen, SignUpScreen } from '../../screens';
+import { CategoryScreen, HomeScreen, LoginScreen, MostPopularScreen, OTPScreen, ProductDetailScreen, SignUpScreen, CartScreen } from '../../screens';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,6 +33,7 @@ export const HomeNavigator: React.FC = () => {
       <Stack.Screen name="category" component={CategoryScreen} />
       <Stack.Screen name="mostpopular" component={MostPopularScreen} />
       <Stack.Screen name="productDetail" component={ProductDetailScreen} />
+      <Stack.Screen name="cart" component={CartScreen} />
     </Stack.Navigator>
   );
 };

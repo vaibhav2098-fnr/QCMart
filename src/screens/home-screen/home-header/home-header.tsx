@@ -3,8 +3,10 @@ import { Image, View, TouchableOpacity } from 'react-native';
 import { Icons } from '../../../assets/qcIcons/qcIcons';
 import { IMG } from '../../../assets/qcImages/qxImages';
 import { styles } from './home-header-styles';
+import { useNavigation } from '@react-navigation/native';
 
 const HomeHeader = () => {
+    const navigation = useNavigation();
     return (
         <View style={styles.container}>
             <TouchableOpacity>
@@ -18,7 +20,7 @@ const HomeHeader = () => {
                     <Image source={Icons['fi-rr-bell']} style={[styles.icon, styles.marginRight]} />
                 </TouchableOpacity>
 
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => (navigation as any).navigate('cart')}>
                     <Image source={Icons['fi-rr-shopping-bag']} style={styles.icon} />
                 </TouchableOpacity>
             </View>

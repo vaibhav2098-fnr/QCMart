@@ -13,8 +13,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: moderateScale(16),
     paddingVertical: moderateScale(12),
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    backgroundColor: '#F6F6F6',
   },
   backButton: {
     padding: moderateScale(8),
@@ -30,7 +29,8 @@ export const styles = StyleSheet.create({
   imageSection: {
     alignItems: 'center',
     paddingVertical: moderateScale(20),
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#F6F6F6',
+    // backgroundColor: '#fff',
   },
   productImage: {
     width: moderateScale(300),
@@ -64,9 +64,9 @@ export const styles = StyleSheet.create({
     marginBottom: moderateScale(16),
   },
   productTitle: {
-    fontSize: moderateScale(18),
+    fontSize: moderateScale(20),
     fontWeight: '600',
-    color: '#333',
+    color: '#202020',
     flex: 1,
     marginRight: moderateScale(12),
     lineHeight: moderateScale(24),
@@ -83,6 +83,13 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: moderateScale(20),
   },
+  divider:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: moderateScale(6),
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
   soldBadge: {
     backgroundColor: '#e8f5e8',
     paddingHorizontal: moderateScale(12),
@@ -92,7 +99,7 @@ export const styles = StyleSheet.create({
   },
   soldText: {
     fontSize: moderateScale(12),
-    color: '#2d5a2d',
+    color: '#93BF06',
     fontWeight: '500',
   },
   ratingContainer: {
@@ -106,14 +113,14 @@ export const styles = StyleSheet.create({
     marginRight: moderateScale(4),
   },
   ratingText: {
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(12),
     fontWeight: '600',
-    color: '#333',
+    color: '#202020',
     marginRight: moderateScale(4),
   },
   reviewText: {
     fontSize: moderateScale(12),
-    color: '#666',
+    color: '#202020',
   },
   descriptionSection: {
     marginBottom: moderateScale(24),
@@ -121,13 +128,14 @@ export const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: moderateScale(16),
     fontWeight: '600',
-    color: '#333',
+    color: '#202020',
     marginBottom: moderateScale(12),
   },
   descriptionText: {
-    fontSize: moderateScale(14),
-    color: '#666',
+    fontSize: moderateScale(12),
+    color: '#202020',
     lineHeight: moderateScale(20),
+    fontWeight:'300'
   },
   colorSection: {
     marginBottom: moderateScale(24),
@@ -204,17 +212,19 @@ export const styles = StyleSheet.create({
   },
   totalPriceLabel: {
     fontSize: moderateScale(12),
-    color: '#666',
+    color: '#8C949D',
     marginBottom: moderateScale(4),
+    fontWeight:'600'
   },
   totalPrice: {
     fontSize: moderateScale(18),
     fontWeight: '700',
-    color: '#333',
+    color: '#202020',
   },
   addToCartButton: {
     flex: 1,
     marginLeft: moderateScale(16),
     backgroundColor: '#001f4d',
+    borderRadius:moderateScale(30),
   },
 }); 

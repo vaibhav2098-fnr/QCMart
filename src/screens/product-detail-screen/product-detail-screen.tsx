@@ -14,6 +14,8 @@ import { statusBarHeight } from '../../utils/helper';
 import { Icons } from '../../assets/qcIcons/qcIcons';
 import CustomButton from '../../components/custom-Button/button';
 import { styles } from './product-detail-styles';
+import { addToCart } from '../../redux/reducers/cart';
+import { useDispatch } from 'react-redux';
 
 interface ProductDetailScreenProps {
   route?: {
@@ -28,13 +30,13 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route }) => {
   const [selectedColor, setSelectedColor] = useState('teal');
   const [quantity, setQuantity] = useState(1);
   const [isFavorite, setIsFavorite] = useState(false);
-
+  const dispatch = useDispatch()
   // Mock product data - in real app this would come from route params
-  // const product = route?.params?.product || {
-    const product = {
+  const product = route?.params?.product || {
+    // const product = {
     id: 1,
     title: 'HP 15, 13th Gen Intel Core i5-1335U',
-    image: 'https://techterms.com/img/xl/laptop_586.png',
+    image: 'https://apiv2.exceldisc.com/media/7070/8299940f-3712-4a23-b648-d3c423efb639.png',
     price: 22056,
     originalPrice: 28000,
     discount: '20% OFF',
@@ -59,6 +61,8 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route }) => {
 
   const handleAddToCart = () => {
     console.log('Added to cart:', { product, quantity, selectedColor });
+    (navigation as any).navigate('cart')
+    dispatch(addToCart(product));
     // Add to cart logic here
   };
 
@@ -116,6 +120,8 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route }) => {
               <Text style={styles.reviewText}>({product.reviewCount} reviews)</Text>
             </View>
           </View>
+
+          <View style={styles.divider}/>
 
           {/* Description */}
           <View style={styles.descriptionSection}>

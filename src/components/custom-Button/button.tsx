@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
+import { Image, StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
 import { moderateScale } from '../../utils/deviceConfig';
+import { Icons } from '../../assets/qcIcons/qcIcons';
 
 interface Props {
     title: string;
@@ -8,6 +9,7 @@ interface Props {
     disabled?: boolean;
     containerStyle?: ViewStyle;
     textStyle?: TextStyle;
+    icons?: React.ReactElement
 }
 
 const CustomButton: React.FC<Props> = ({
@@ -16,6 +18,7 @@ const CustomButton: React.FC<Props> = ({
     disabled = false,
     containerStyle,
     textStyle,
+    icons = null,
 }) => {
     return (
         <TouchableOpacity
@@ -28,6 +31,7 @@ const CustomButton: React.FC<Props> = ({
                 containerStyle,
             ]}
         >
+            {icons}
             <Text
                 style={[
                     styles.buttonText,
@@ -70,4 +74,11 @@ const styles = StyleSheet.create({
     disabledText: {
         color: '#001f4d',
     },
+    checkoutIcon: {
+        width: moderateScale(20),
+        height: moderateScale(20),
+        resizeMode: 'contain',
+        marginRight: moderateScale(8),
+        tintColor: '#fff',
+    }
 });

@@ -1,31 +1,32 @@
-import { moderateScale } from '@/src/utils/deviceConfig';
-import { Ionicons } from '@expo/vector-icons';
+import { moderateScale } from '../../utils/deviceConfig';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Icons } from '../../assets/qcIcons/qcIcons';
 
-interface CartItemCardProps {
-  image: string;
+interface CartItem {
+  id: number;
   title: string;
   price: number;
+  image: string;
   quantity: number;
-  onIncrement: () => void;
-  onDecrement: () => void;
-  onRemove: () => void;
+}
+
+interface CartItemCardProps {
+  item: CartItem;
+  onQuantityChange: (newQuantity: number) => void;
+  onRemove: (item: CartItem) => void;
 }
 
 const CartItemCard: React.FC<CartItemCardProps> = ({
-  image,
-  title,
-  price,
-  quantity,
-  onIncrement,
-  onDecrement,
+  item,
+  onQuantityChange,
   onRemove,
 }) => {
+  const { title, price, image, quantity } = item;
   return (
     <View style={styles.card}>
       <View style={styles.bgProductImage}>
-        <Image source={image} style={styles.productImage} />
+        <Image source={{uri:image}} style={styles.productImage} />
       </View>
 
 
@@ -35,17 +36,23 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
       </View>
 
       <View style={styles.actions}>
-        <TouchableOpacity onPress={onRemove}>
-          <Ionicons name="trash-outline" size={24} color="red" />
+        <TouchableOpacity onPress={() => onRemove(item)} style={styles.removeButton}>
+          <Image source={Icons['fi-rr-trash']} style={styles.removeIcon} />
         </TouchableOpacity>
 
         <View style={styles.counter}>
-          <TouchableOpacity onPress={onDecrement}>
-            <Text style={styles.counterBtn}>−</Text>
+          <TouchableOpacity 
+            onPress={() => onQuantityChange(quantity - 1)}
+            style={styles.counterBtn}
+          >
+            <Text style={styles.counterBtnText}>−</Text>
           </TouchableOpacity>
           <Text style={styles.counterText}>{quantity}</Text>
-          <TouchableOpacity onPress={onIncrement}>
-            <Text style={styles.counterBtn}>+</Text>
+          <TouchableOpacity 
+            onPress={() => onQuantityChange(quantity + 1)}
+            style={styles.counterBtn}
+          >
+            <Text style={styles.counterBtnText}>+</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -92,6 +99,18 @@ const styles = StyleSheet.create({
   actions: {
     alignItems: 'flex-end',
   },
+  removeButton: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    padding: moderateScale(8),
+  },
+  removeIcon: {
+    width: moderateScale(20),
+    height: moderateScale(20),
+    resizeMode: 'contain',
+    tintColor: '#ef4444',
+  },
   counter: {
     marginTop: moderateScale(40),
     flexDirection: 'row',
@@ -102,8 +121,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   counterBtn: {
-    fontSize: moderateScale(18),
     paddingHorizontal: moderateScale(10),
+    paddingVertical: moderateScale(5),
+  },
+  counterBtnText: {
+    fontSize: moderateScale(18),
     fontWeight: '400',
     color: '#003D68'
   },

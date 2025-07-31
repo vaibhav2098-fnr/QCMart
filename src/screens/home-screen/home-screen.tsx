@@ -17,6 +17,7 @@ import { useNavigation } from '@react-navigation/native';
 import CategoryChips from '../../components/custom-Chips/category-Chips';
 import { useDispatch, useSelector } from 'react-redux';
 import { productCategoriesDataRequest } from '../../redux/reducers/product-categories';
+// import { addToCart } from '../../redux/reducers/cart';
 import { RootState } from '../../redux/reducers';
 
 const HomeScreen = () => {
@@ -29,6 +30,10 @@ const HomeScreen = () => {
   }, [dispatch]);
 
   const [Search, setSearch] = useState('')
+
+  // const handleAddToCart = (product: any) => {
+  //   dispatch(addToCart(product));
+  // };
   return (
     <View style={{ flex: 1, marginTop: statusBarHeight, paddingHorizontal: moderateScale(16), backgroundColor: '#fff', marginVertical: moderateScale(16) }}>
       <HomeHeader />
@@ -86,6 +91,7 @@ const HomeScreen = () => {
               image={{ uri: item?.image }}
               isFavorite={item?.isFavorite}
               product={item}
+              // onAddToCart={handleAddToCart}
             />
           )}
         />
@@ -108,6 +114,8 @@ const HomeScreen = () => {
               offer={item?.discount}
               image={{ uri: item?.image }}
               isFavorite={item?.isFavorite}
+              product={item}
+              // onAddToCart={handleAddToCart}
             />
           )}
         />

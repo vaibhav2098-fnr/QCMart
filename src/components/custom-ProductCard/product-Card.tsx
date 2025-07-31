@@ -14,6 +14,7 @@ const ProductCard = (props: any) => {
         image,
         isFavorite,
         product,
+        // onAddToCart,
     } = props;
 
     return (
@@ -42,6 +43,18 @@ const ProductCard = (props: any) => {
                 {oldPrice ? <Text style={styles.oldPrice}>₹{oldPrice}</Text> : null}
                 {offer ? <Text style={styles.offer}>{offer}</Text> : null}
             </View>
+            
+            {/* <TouchableOpacity 
+                style={styles.addToCartButton}
+                onPress={(e) => {
+                    e.stopPropagation();
+                    if (onAddToCart) {
+                        onAddToCart(product || { title, price, oldPrice, offer, image, isFavorite });
+                    }
+                }}
+            >
+                <Text style={styles.addToCartText}>Add to Cart</Text>
+            </TouchableOpacity> */}
         </TouchableOpacity>
     );
 };
@@ -122,4 +135,17 @@ const styles = StyleSheet.create({
         marginLeft: moderateScale(8),
         fontWeight: '600',
     },
+    // addToCartButton: {
+    //     backgroundColor: '#25D366',
+    //     borderRadius: moderateScale(6),
+    //     paddingVertical: moderateScale(6),
+    //     paddingHorizontal: moderateScale(8),
+    //     marginTop: moderateScale(8),
+    //     alignItems: 'center',
+    // },
+    // addToCartText: {
+    //     color: '#fff',
+    //     fontSize: moderateScale(10),
+    //     fontWeight: '600',
+    // },
 });
