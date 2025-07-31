@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Icons } from '../../assets/qcIcons/qcIcons';
 import { moderateScale } from '../../utils/deviceConfig';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { checkoutScreenStyles } from './checkout-styles';
 import { RootState } from '../../redux/reducers';
@@ -24,17 +24,30 @@ interface CartItem {
   quantity: number;
 }
 
+interface ShippingAddress {
+  id: number;
+  type: string;
+  address: string;
+  isSelected: boolean;
+}
+
 const CheckoutScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
   const { cartItems, totalAmount } = useSelector((state: RootState) => state.cartReducer);
+  
+  // Get selected address from route params or use default
+  const selectedAddress = (route.params as any)?.selectedAddress || {
+    type: 'Home',
+    address: '61480 Sunbrook park, PC 5679',
+  };
 
   const handleBackPress = () => {
     navigation.goBack();
   };
 
   const handleEditAddress = () => {
-    // TODO: Navigate to address selection/editing screen
-    console.log('Edit address pressed');
+    navigation.navigate('ShippingAddress' as never);
   };
 
   const handleCheckout = () => {
@@ -101,9 +114,9 @@ const CheckoutScreen = () => {
             </View>
 
             <View style={checkoutScreenStyles.addressDetails}>
-              <Text style={checkoutScreenStyles.addressLabel}>Home</Text>
+              <Text style={checkoutScreenStyles.addressLabel}>{selectedAddress.type}</Text>
               <Text style={checkoutScreenStyles.addressText}>
-                61480 Sunbrook park, PC 5679
+                {selectedAddress.address}
               </Text>
             </View>
 
