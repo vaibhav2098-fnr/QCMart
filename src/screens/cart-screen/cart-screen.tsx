@@ -62,8 +62,7 @@ const CartScreen = () => {
   };
 
   const handleCheckout = () => {
-    // TODO: Implement checkout functionality
-    console.log('Proceeding to checkout...');
+    navigation.navigate('Checkout' as never);
   };
 
   const renderCartItem = ({ item }: { item: CartItem }) => (

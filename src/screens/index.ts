@@ -6,3 +6,4 @@ export { default as CategoryScreen } from './category-screen/category-screen';
 export { default as MostPopularScreen } from './most-popular-screen/most-popular-screen';
 export { default as ProductDetailScreen } from './product-detail-screen/product-detail-screen';
 export { default as CartScreen } from './cart-screen/cart-screen';
+export { default as CheckoutScreen } from './checkout-screen/checkout-screen';

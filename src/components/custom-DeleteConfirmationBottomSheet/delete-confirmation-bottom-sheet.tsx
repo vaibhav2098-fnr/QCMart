@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
     height: moderateScale(80),
     borderRadius: moderateScale(8),
     backgroundColor: '#F6F6F6',
+    resizeMode:'contain'
   },
   newBadge: {
     position: 'absolute',
