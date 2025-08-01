@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   StatusBar,
+  ScrollView,
 } from 'react-native';
 import { Icons } from '../../assets/qcIcons/qcIcons';
 import { moderateScale } from '../../utils/deviceConfig';
@@ -15,6 +16,7 @@ import { useSelector } from 'react-redux';
 import { checkoutScreenStyles } from './checkout-styles';
 import { RootState } from '../../redux/reducers';
 import CustomButton from '../../components/custom-Button/button';
+import { isObject } from 'formik';
 
 interface CartItem {
   id: number;
@@ -31,16 +33,22 @@ interface ShippingAddress {
   isSelected: boolean;
 }
 
+interface ShippingOption {
+  id: string;
+  name: string;
+  estimatedArrival: string;
+  cost: number;
+  isSelected: boolean;
+}
+
 const CheckoutScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { cartItems, totalAmount } = useSelector((state: RootState) => state.cartReducer);
-  
-  // Get selected address from route params or use default
-  const selectedAddress = (route.params as any)?.selectedAddress || {
-    type: 'Home',
-    address: '61480 Sunbrook park, PC 5679',
-  };
+  const { selectedShippingAddress, selectedShippingOption } = useSelector((state: RootState) => state.commonReducer);
+
+  // Get selected address from route params or use Redux state
+  const selectedAddress = (route.params as any)?.selectedAddress || selectedShippingAddress;
 
   const handleBackPress = () => {
     navigation.goBack();
@@ -48,6 +56,10 @@ const CheckoutScreen = () => {
 
   const handleEditAddress = () => {
     navigation.navigate('ShippingAddress' as never);
+  };
+
+  const handleChooseShipping = () => {
+    navigation.navigate('ChooseShipping' as never);
   };
 
   const handleCheckout = () => {
@@ -97,62 +109,117 @@ const CheckoutScreen = () => {
         <View style={checkoutScreenStyles.headerSpacer} />
       </View>
 
-      {/* Content */}
-      <View style={checkoutScreenStyles.content}>
-        {/* Shipping Address Section */}
-        <View style={checkoutScreenStyles.section}>
-          <Text style={checkoutScreenStyles.sectionTitle}>Shipping Address</Text>
+      <ScrollView style={{ flexGrow: 1 }}>
+        {/* Content */}
+        <View style={checkoutScreenStyles.content}>
+          {/* Shipping Address Section */}
+          <View style={checkoutScreenStyles.section}>
+            <Text style={checkoutScreenStyles.sectionTitle}>Shipping Address</Text>
 
-          <View style={checkoutScreenStyles.addressCard}>
-            <View style={checkoutScreenStyles.addressIconContainer}>
-              <View style={checkoutScreenStyles.addressIconSubContainer}>
-                <Image
-                  source={Icons['fi-rr-location-alt']}
-                  style={checkoutScreenStyles.addressIcon}
-                />
+            <View style={checkoutScreenStyles.addressCard}>
+              <View style={checkoutScreenStyles.addressIconContainer}>
+                <View style={checkoutScreenStyles.addressIconSubContainer}>
+                  <Image
+                    source={Icons['fi-rr-location-alt']}
+                    style={checkoutScreenStyles.addressIcon}
+                  />
+                </View>
               </View>
-            </View>
 
-            <View style={checkoutScreenStyles.addressDetails}>
-              <Text style={checkoutScreenStyles.addressLabel}>{selectedAddress.type}</Text>
-              <Text style={checkoutScreenStyles.addressText}>
-                {selectedAddress.address}
-              </Text>
+              <View style={checkoutScreenStyles.addressDetails}>
+                <Text style={checkoutScreenStyles.addressLabel}>{selectedAddress.type}</Text>
+                <Text style={checkoutScreenStyles.addressText}>
+                  {selectedAddress.address}
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                style={checkoutScreenStyles.editButton}
+                onPress={handleEditAddress}
+              >
+                <Image
+                  source={Icons['fi-rr-edit']}
+                  style={checkoutScreenStyles.editIcon}
+                />
+              </TouchableOpacity>
             </View>
+          </View>
+          <View style={checkoutScreenStyles.dividerLine} />
+
+          {/* Order List Section */}
+          <View style={checkoutScreenStyles.section}>
+            <Text style={checkoutScreenStyles.sectionTitle}>Order List</Text>
+
+            <FlatList
+              data={cartItems}
+              renderItem={renderOrderItem}
+              keyExtractor={(item) => item.id.toString()}
+              contentContainerStyle={checkoutScreenStyles.orderList}
+              showsVerticalScrollIndicator={false}
+              scrollEnabled={false}
+            />
+          </View>
+          {/* Shipping Section */}
+          <View style={checkoutScreenStyles.section}>
+            <Text style={checkoutScreenStyles.sectionTitle}>Choose Shipping</Text>
 
             <TouchableOpacity
-              style={checkoutScreenStyles.editButton}
-              onPress={handleEditAddress}
+              style={checkoutScreenStyles.shippingCard}
+              onPress={handleChooseShipping}
             >
-              <Image
-                source={Icons['fi-rr-edit']}
-                style={checkoutScreenStyles.editIcon}
-              />
+              {isObject(selectedShippingOption) ?
+                <>
+                  <View style={[checkoutScreenStyles.shippingIconContainer, { backgroundColor: '#041C45' }]}>
+                    <Image
+                      source={Icons['fi-rr-location-alt']}
+                      style={checkoutScreenStyles.shippingIcon}
+                      tintColor={'#fff'}
+                    />
+                  </View>
+
+                  <View style={checkoutScreenStyles.shippingDetails}>
+                    <Text style={checkoutScreenStyles.shippingSelectedLabel}>{selectedShippingOption?.name}</Text>
+                    <Text style={checkoutScreenStyles.shippingSelectedLabel}>Estimated: {selectedShippingOption?.estimatedArrival}</Text>
+                  </View>
+                  <Text style={[checkoutScreenStyles.shippingSelectedLabel, checkoutScreenStyles.marginLeft]}>{selectedShippingOption?.cost}</Text>
+                  <Image
+                    source={Icons['fi-rr-edit']}
+                    style={checkoutScreenStyles.arrowIcon}
+                  />
+                </>
+                :
+                <>
+                  <View style={checkoutScreenStyles.shippingIconContainer}>
+                    <Image
+                      source={Icons['fi-rr-truck-side']}
+                      style={checkoutScreenStyles.shippingIcon}
+                    />
+                  </View>
+
+                  <View style={checkoutScreenStyles.shippingDetails}>
+                    <Text style={checkoutScreenStyles.shippingLabel}>Choose Shipping Type</Text>
+                  </View>
+
+                  <Image
+                    source={Icons['fi-rr-angle-right']}
+                    style={checkoutScreenStyles.arrowIcon}
+                  />
+                </>
+              }
             </TouchableOpacity>
           </View>
+
+          <View style={checkoutScreenStyles.dividerLine} />
         </View>
-        <View style={checkoutScreenStyles.dividerLine} />
 
-        {/* Order List Section */}
-        <View style={checkoutScreenStyles.section}>
-          <Text style={checkoutScreenStyles.sectionTitle}>Order List</Text>
 
-          <FlatList
-            data={cartItems}
-            renderItem={renderOrderItem}
-            keyExtractor={(item) => item.id.toString()}
-            contentContainerStyle={checkoutScreenStyles.orderList}
-            showsVerticalScrollIndicator={false}
-          />
-        </View>
-      </View>
-
+      </ScrollView>
       {/* Footer - Total and Checkout */}
       <View style={checkoutScreenStyles.footer}>
         <View style={checkoutScreenStyles.totalSection}>
           <Text style={checkoutScreenStyles.totalLabel}>Total Price</Text>
           <Text style={checkoutScreenStyles.totalAmount}>
-            ₹{totalAmount.toLocaleString('en-IN')}
+            ₹{(totalAmount).toLocaleString('en-IN')}
           </Text>
         </View>
 

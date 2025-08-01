@@ -33,12 +33,12 @@ const styles = StyleSheet.create({
   circle: {
     borderRadius: moderateScale(10),
     borderWidth: 2,
-    borderColor: '#ccc',
+    borderColor: '#041C45',
     justifyContent: 'center',
     alignItems: 'center',
   },
   selectedCircle: {
     borderRadius: moderateScale(6),
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#041C45',
   },
 }); 

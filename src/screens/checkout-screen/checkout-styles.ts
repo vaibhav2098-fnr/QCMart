@@ -109,7 +109,6 @@ export const checkoutScreenStyles = StyleSheet.create({
   },
   orderList: {
     marginVertical:moderateScale(16),
-    paddingBottom:moderateScale(200)
   },
   orderItemCard: {
     backgroundColor: '#fff',
@@ -235,5 +234,59 @@ export const checkoutScreenStyles = StyleSheet.create({
     height: 2,
     backgroundColor: '#EEEEEE',
     width: getDeviceWidth() * 0.9
-  }
+  },
+  shippingCard: {
+    backgroundColor: '#fff',
+    borderRadius: moderateScale(12),
+    padding: moderateScale(16),
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  shippingIconContainer: {
+    width: moderateScale(40),
+    height: moderateScale(40),
+    borderRadius: moderateScale(20),
+    backgroundColor: '#F0F6FB',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: moderateScale(12),
+  },
+  shippingIcon: {
+    width: moderateScale(20),
+    height: moderateScale(20),
+    resizeMode: 'contain',
+    tintColor: '#003D68',
+  },
+  shippingDetails: {
+    flex: 1,
+  },
+  shippingLabel: {
+    fontSize: moderateScale(14),
+    fontWeight: '500',
+    color: '#202020',
+  },
+  shippingSelectedLabel: {
+    fontSize: moderateScale(14),
+    fontWeight: '500',
+    color: '#202020',
+  },
+  marginLeft:{
+    marginRight:moderateScale(16),
+    fontSize: moderateScale(16),
+  },
+  arrowIcon: {
+    width: moderateScale(16),
+    height: moderateScale(16),
+    resizeMode: 'contain',
+    tintColor: '#666',
+  },
+  shippingCostText: {
+    fontSize: moderateScale(12),
+    color: '#666',
+    marginTop: moderateScale(2),
+  },
 }); 

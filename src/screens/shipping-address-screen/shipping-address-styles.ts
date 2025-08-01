@@ -116,7 +116,6 @@ export const shippingAddressScreenStyles = StyleSheet.create({
   applyButton: {
     backgroundColor: '#001f4d',
     borderRadius: moderateScale(12),
-    paddingVertical: moderateScale(16),
   },
   applyButtonText: {
     color: '#fff',

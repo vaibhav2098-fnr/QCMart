@@ -17,6 +17,9 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { shippingAddressScreenStyles } from './shipping-address-styles';
 import CustomButton from '../../components/custom-Button/button';
 import SingleRadioButton from '../../components/custom-RadioButton/single-radio-button';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectShippingAddress, addShippingAddress } from '../../redux/reducers/common';
+import { RootState } from '../../redux/reducers';
 
 interface ShippingAddress {
   id: number;
@@ -28,32 +31,8 @@ interface ShippingAddress {
 const ShippingAddressScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const [addresses, setAddresses] = useState<ShippingAddress[]>([
-    {
-      id: 1,
-      type: 'Home',
-      address: '61480 Sunbrook park, PC 5679',
-      isSelected: true,
-    },
-    {
-      id: 2,
-      type: 'Office',
-      address: '123 Business Center, Suite 456, PC 1234',
-      isSelected: false,
-    },
-    {
-      id: 3,
-      type: 'Apartment',
-      address: '789 Downtown Ave, Apt 101, PC 5678',
-      isSelected: false,
-    },
-    {
-      id: 4,
-      type: "Parent's House",
-      address: '456 Family Street, PC 9012',
-      isSelected: false,
-    },
-  ]);
+  const dispatch = useDispatch();
+  const { shippingAddresses } = useSelector((state: RootState) => state.commonReducer);
 
   // Modal state for adding new address
   const [modalVisible, setModalVisible] = useState(false);
@@ -65,12 +44,7 @@ const ShippingAddressScreen = () => {
   };
 
   const handleAddressSelect = (selectedId: number) => {
-    setAddresses(prevAddresses =>
-      prevAddresses.map(address => ({
-        ...address,
-        isSelected: address.id === selectedId,
-      }))
-    );
+    dispatch(selectShippingAddress(selectedId));
   };
 
   const handleAddNewAddress = () => {
@@ -84,13 +58,13 @@ const ShippingAddressScreen = () => {
     }
 
     const newAddress: ShippingAddress = {
-      id: addresses.length + 1,
+      id: shippingAddresses.length + 1,
       type: newAddressType.trim(),
       address: newAddressText.trim(),
       isSelected: false,
     };
 
-    setAddresses(prev => [...prev, newAddress]);
+    dispatch(addShippingAddress(newAddress));
     setNewAddressType('');
     setNewAddressText('');
     setModalVisible(false);
@@ -103,10 +77,10 @@ const ShippingAddressScreen = () => {
   };
 
   const handleApply = () => {
-    const selectedAddress = addresses.find(addr => addr.isSelected);
+    const selectedAddress = shippingAddresses.find(addr => addr.isSelected);
     if (selectedAddress) {
-      // Pass selected address back to checkout screen
-      navigation.navigate('Checkout' as never, { selectedAddress } as never);
+      // Navigate back to checkout screen
+      navigation.goBack();
     }
   };
 
@@ -164,7 +138,7 @@ const ShippingAddressScreen = () => {
       {/* Content */}
       <View style={shippingAddressScreenStyles.content}>
         <FlatList
-          data={addresses}
+          data={shippingAddresses}
           renderItem={renderAddressItem}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={shippingAddressScreenStyles.addressList}

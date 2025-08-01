@@ -8,3 +8,4 @@ export { default as ProductDetailScreen } from './product-detail-screen/product-
 export { default as CartScreen } from './cart-screen/cart-screen';
 export { default as CheckoutScreen } from './checkout-screen/checkout-screen';
 export { default as ShippingAddressScreen } from './shipping-address-screen/shipping-address-screen';
+export { default as ChooseShippingScreen } from './choose-shipping-screen/choose-shipping-screen';
