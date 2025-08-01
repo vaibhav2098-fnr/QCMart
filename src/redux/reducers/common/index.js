@@ -68,6 +68,44 @@ const initialState = {
       isSelected: false,
     },
   ],
+  selectedPromo: null,
+  promoOptions: [
+    {
+      id: '1',
+      title: 'Special 25% Off',
+      description: 'Special Promo Only Today!',
+      discount: 25,
+      isSelected: false,
+    },
+    {
+      id: '2',
+      title: 'Discount 30% Off',
+      description: 'New User Special Promo',
+      discount: 30,
+      isSelected: true,
+    },
+    {
+      id: '3',
+      title: 'Special 25% Off',
+      description: 'Special Promo Only Today!',
+      discount: 25,
+      isSelected: false,
+    },
+    {
+      id: '4',
+      title: 'Discount 40% Off',
+      description: 'Special Promo Only Today!',
+      discount: 40,
+      isSelected: false,
+    },
+    {
+      id: '5',
+      title: 'Special 35% Off',
+      description: 'Special Promo Only Today!',
+      discount: 35,
+      isSelected: false,
+    },
+  ],
 };
 
 export const commonSlice = createSlice({
@@ -133,12 +171,43 @@ export const commonSlice = createSlice({
       }
     },
     
+    // Select promo by ID
+    selectPromo: (state, action) => {
+      const selectedId = action.payload;
+      state.promoOptions = state.promoOptions.map(promo => ({
+        ...promo,
+        isSelected: promo.id === selectedId,
+      }));
+      
+      // Update selected promo
+      const selectedPromo = state.promoOptions.find(promo => promo.id === selectedId);
+      if (selectedPromo) {
+        state.selectedPromo = selectedPromo;
+      }
+    },
+    
+    // Update promo options
+    updatePromoOptions: (state, action) => {
+      state.promoOptions = action.payload;
+    },
+    
+    // Clear selected promo
+    clearSelectedPromo: (state) => {
+      state.selectedPromo = null;
+      state.promoOptions = state.promoOptions.map(promo => ({
+        ...promo,
+        isSelected: false,
+      }));
+    },
+    
     // Reset common state
     resetCommonState: (state) => {
       state.selectedShippingAddress = initialState.selectedShippingAddress;
       state.shippingAddresses = initialState.shippingAddresses;
       state.selectedShippingOption = initialState.selectedShippingOption;
       state.shippingOptions = initialState.shippingOptions;
+      state.selectedPromo = initialState.selectedPromo;
+      state.promoOptions = initialState.promoOptions;
     },
   },
 });
@@ -151,6 +220,9 @@ export const {
   updateSelectedShippingOption,
   updateShippingOptions,
   selectShippingOption,
+  selectPromo,
+  updatePromoOptions,
+  clearSelectedPromo,
   resetCommonState,
 } = commonSlice.actions;
 

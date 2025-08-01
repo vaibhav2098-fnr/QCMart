@@ -107,9 +107,6 @@ export const checkoutScreenStyles = StyleSheet.create({
     resizeMode: 'contain',
     tintColor: '#666',
   },
-  orderList: {
-    marginVertical:moderateScale(16),
-  },
   orderItemCard: {
     backgroundColor: '#fff',
     borderRadius: moderateScale(12),
@@ -288,5 +285,56 @@ export const checkoutScreenStyles = StyleSheet.create({
     fontSize: moderateScale(12),
     color: '#666',
     marginTop: moderateScale(2),
+  },
+  promoCard: {
+    backgroundColor: '#fff',
+    borderRadius: moderateScale(12),
+    padding: moderateScale(16),
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  promoIconContainer: {
+    width: moderateScale(40),
+    height: moderateScale(40),
+    borderRadius: moderateScale(20),
+    backgroundColor: '#F0F6FB',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: moderateScale(12),
+  },
+  promoIcon: {
+    width: moderateScale(20),
+    height: moderateScale(20),
+    resizeMode: 'contain',
+    tintColor: '#666',
+  },
+  promoDetails: {
+    flex: 1,
+  },
+  promoLabel: {
+    fontSize: moderateScale(14),
+    fontWeight: '500',
+    color: '#202020',
+  },
+  promoSelectedLabel: {
+    fontSize: moderateScale(14),
+    fontWeight: '600',
+    color: '#09090A',
+    marginBottom: moderateScale(2),
+  },
+  promoSelectedDescription: {
+    fontSize: moderateScale(12),
+    color: '#8C949D',
+    lineHeight: moderateScale(16),
+  },
+  promoDiscountText: {
+    fontSize: moderateScale(12),
+    fontWeight: 'bold',
+    color: '#22C55E',
+    marginRight: moderateScale(8),
   },
 }); 

@@ -26,26 +26,11 @@ interface CartItem {
   quantity: number;
 }
 
-interface ShippingAddress {
-  id: number;
-  type: string;
-  address: string;
-  isSelected: boolean;
-}
-
-interface ShippingOption {
-  id: string;
-  name: string;
-  estimatedArrival: string;
-  cost: number;
-  isSelected: boolean;
-}
-
 const CheckoutScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { cartItems, totalAmount } = useSelector((state: RootState) => state.cartReducer);
-  const { selectedShippingAddress, selectedShippingOption } = useSelector((state: RootState) => state.commonReducer);
+  const { selectedShippingAddress, selectedShippingOption, selectedPromo } = useSelector((state: RootState) => state.commonReducer);
 
   // Get selected address from route params or use Redux state
   const selectedAddress = (route.params as any)?.selectedAddress || selectedShippingAddress;
@@ -60,6 +45,10 @@ const CheckoutScreen = () => {
 
   const handleChooseShipping = () => {
     navigation.navigate('ChooseShipping' as never);
+  };
+
+  const handlePromoCode = () => {
+    navigation.navigate('AddPromo' as never);
   };
 
   const handleCheckout = () => {
@@ -154,11 +143,12 @@ const CheckoutScreen = () => {
               data={cartItems}
               renderItem={renderOrderItem}
               keyExtractor={(item) => item.id.toString()}
-              contentContainerStyle={checkoutScreenStyles.orderList}
               showsVerticalScrollIndicator={false}
               scrollEnabled={false}
             />
           </View>
+          <View style={checkoutScreenStyles.dividerLine} />
+
           {/* Shipping Section */}
           <View style={checkoutScreenStyles.section}>
             <Text style={checkoutScreenStyles.sectionTitle}>Choose Shipping</Text>
@@ -208,7 +198,57 @@ const CheckoutScreen = () => {
               }
             </TouchableOpacity>
           </View>
+          <View style={checkoutScreenStyles.dividerLine} />
 
+          {/* Promo Code Section */}
+          <View style={checkoutScreenStyles.section}>
+            <Text style={checkoutScreenStyles.sectionTitle}>Promo Code</Text>
+
+            <TouchableOpacity
+              style={checkoutScreenStyles.promoCard}
+              onPress={handlePromoCode}
+            >
+              {selectedPromo ? (
+                <>
+                  <View style={checkoutScreenStyles.promoIconContainer}>
+                    <Image
+                      source={Icons['fi-rr-ticket']}
+                      style={checkoutScreenStyles.promoIcon}
+                      tintColor={'#22C55E'}
+                    />
+                  </View>
+
+                  <View style={checkoutScreenStyles.promoDetails}>
+                    <Text style={checkoutScreenStyles.promoSelectedLabel}>{selectedPromo?.title}</Text>
+                    <Text style={checkoutScreenStyles.promoSelectedDescription}>{selectedPromo?.description}</Text>
+                  </View>
+                  <Text style={checkoutScreenStyles.promoDiscountText}>{selectedPromo?.discount}% OFF</Text>
+                  <Image
+                    source={Icons['fi-rr-edit']}
+                    style={checkoutScreenStyles.arrowIcon}
+                  />
+                </>
+              ) : (
+                <>
+                  <View style={checkoutScreenStyles.promoIconContainer}>
+                    <Image
+                      source={Icons['fi-rr-ticket']}
+                      style={checkoutScreenStyles.promoIcon}
+                    />
+                  </View>
+
+                  <View style={checkoutScreenStyles.promoDetails}>
+                    <Text style={checkoutScreenStyles.promoLabel}>Add Promo Code</Text>
+                  </View>
+
+                  <Image
+                    source={Icons['fi-rr-plus']}
+                    style={checkoutScreenStyles.arrowIcon}
+                  />
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
           <View style={checkoutScreenStyles.dividerLine} />
         </View>
 
