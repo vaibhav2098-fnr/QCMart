@@ -1,23 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import HomeHeader from './home-header/home-header';
-import { statusBarHeight } from '../../utils/helper';
+import { statusBarHeight, transformIconName } from '../../utils/helper';
 import { moderateScale } from '../../utils/deviceConfig';
 import CustomInput from '../../components/custom-Input/input-field';
 import { Icons } from '../../assets/qcIcons/qcIcons';
 import CustomCarousel from '../../components/custom-Carousel/carousel';
-import { DATA, categoryData, products } from './dummy-data';
+import { DATA, products } from './dummy-data';
 import CategoryItem from '../../components/custom-category/custom-category';
 import HomeSeeAll from './home-see-all/home-see-all';
 import ProductCard from '../../components/custom-ProductCard/product-Card';
-import { IMG } from '../../assets/qcImages/qxImages';
 import PromoBanner from './home-promo-banner/home-promo-banner';
 import SummerSaleBanner from './home-summerSaleBanner/home-summerSaleBanner';
 import { useNavigation } from '@react-navigation/native';
 import CategoryChips from '../../components/custom-Chips/category-Chips';
 import { useDispatch, useSelector } from 'react-redux';
 import { productCategoriesDataRequest } from '../../redux/reducers/product-categories';
-// import { addToCart } from '../../redux/reducers/cart';
 import { RootState } from '../../redux/reducers';
 
 const HomeScreen = () => {
@@ -64,7 +62,7 @@ const HomeScreen = () => {
             justifyContent: 'space-between',
           }}
           renderItem={({ item }) => (
-            <CategoryItem icon={item?.icon || Icons['fi-rr-camera']} title={item.name} onPress={() => console.log(item.name)} />
+            <CategoryItem icon={Icons[transformIconName(item?.icon)] || Icons['fi-rr-cube']} title={item.name} onPress={() => console.log(item.name)} />
           )}
         />
 

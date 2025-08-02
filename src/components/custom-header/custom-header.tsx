@@ -3,7 +3,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Icons } from '../../assets/qcIcons/qcIcons'; // Assuming you have back & search icons
 
-const CustomHeader = ({ onBack, title, onSearch, isShowSearch }: any) => {
+const CustomHeader = ({ onBack, title, onSearch, isShowSearch,rightIcon }: any) => {
     return (
         <View style={styles.container}>
             <TouchableOpacity onPress={onBack} style={styles.iconWrapper}>
@@ -13,7 +13,7 @@ const CustomHeader = ({ onBack, title, onSearch, isShowSearch }: any) => {
             <Text style={styles.title}>{title}</Text>
 
             {isShowSearch ? <TouchableOpacity onPress={onSearch} style={styles.iconWrapper}>
-                <Image source={Icons['fi-rr-search']} style={styles.icon} />
+                <Image source={rightIcon || Icons['fi-rr-search']} style={styles.icon} />
             </TouchableOpacity> : <View />}
         </View>
     );

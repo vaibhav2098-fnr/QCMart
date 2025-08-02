@@ -120,6 +120,7 @@ const MostPopularScreen = () => {
                             offer={item?.discount}
                             image={{ uri: item?.image }}
                             isFavorite={item?.isFavorite}
+                            product={item}
                         />
                     )}
                 />

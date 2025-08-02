@@ -184,6 +184,11 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route }) => {
           title="Add To Cart"
           onPress={handleAddToCart}
           containerStyle={styles.addToCartButton}
+          icons={<Image
+            source={Icons['fi-rr-shopping-bag']}
+            style={styles.checkoutIcon}
+          />
+          }
         />
       </View>
     </SafeAreaView>

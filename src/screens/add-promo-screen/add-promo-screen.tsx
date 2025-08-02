@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   Image,
   StatusBar,
   ScrollView,
+  TextInput,
+  Animated,
 } from 'react-native';
 import { Icons } from '../../assets/qcIcons/qcIcons';
 import { moderateScale } from '../../utils/deviceConfig';
@@ -18,6 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectPromo } from '../../redux/reducers/common';
 import { RootState } from '../../redux/reducers';
 import { IMG } from '../../assets/qcImages/qxImages';
+import CustomInput from '../../components/custom-Input/input-field';
 
 interface PromoOption {
   id: string;
@@ -32,9 +35,35 @@ const AddPromoScreen = () => {
   const dispatch = useDispatch();
   const { promoOptions } = useSelector((state: RootState) => state.commonReducer);
 
-  const handleBackPress = () => {
-    navigation.goBack();
-  };
+  const [searchVisible, setSearchVisible] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [filteredPromos, setFilteredPromos] = useState<PromoOption[]>(promoOptions);
+
+  const searchAnim = useRef(new Animated.Value(0)).current;
+
+  // Animate in/out the search bar
+  useEffect(() => {
+    Animated.timing(searchAnim, {
+      toValue: searchVisible ? 1 : 0,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  }, [searchVisible]);
+
+  // Filter logic
+  useEffect(() => {
+    if (!searchText.trim()) {
+      setFilteredPromos(promoOptions);
+    } else {
+      const filtered = promoOptions.filter((item) =>
+        item.title.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.description.toLowerCase().includes(searchText.toLowerCase())
+      );
+      setFilteredPromos(filtered);
+    }
+  }, [searchText, promoOptions]);
+
+  const handleBackPress = () => navigation.goBack();
 
   const handlePromoSelect = (selectedId: string) => {
     dispatch(selectPromo(selectedId));
@@ -42,10 +71,7 @@ const AddPromoScreen = () => {
 
   const handleApply = () => {
     const selectedPromo = promoOptions.find(promo => promo.isSelected);
-    if (selectedPromo) {
-      // Navigate back to checkout screen
-      navigation.goBack();
-    }
+    if (selectedPromo) navigation.goBack();
   };
 
   const renderPromoOption = (promo: PromoOption) => (
@@ -64,9 +90,7 @@ const AddPromoScreen = () => {
 
         <View style={addPromoScreenStyles.promoDetails}>
           <Text style={addPromoScreenStyles.promoTitle}>{promo.title}</Text>
-          <Text style={addPromoScreenStyles.promoDescription}>
-            {promo.description}
-          </Text>
+          <Text style={addPromoScreenStyles.promoDescription}>{promo.description}</Text>
         </View>
 
         <SingleRadioButton
@@ -83,31 +107,56 @@ const AddPromoScreen = () => {
 
       {/* Header */}
       <View style={addPromoScreenStyles.header}>
-        <TouchableOpacity
-          style={addPromoScreenStyles.backButton}
-          onPress={handleBackPress}
-        >
-          <Image
-            source={Icons['fi-rr-angle-left']}
-            style={addPromoScreenStyles.backIcon}
-          />
+        <TouchableOpacity style={addPromoScreenStyles.backButton} onPress={handleBackPress}>
+          <Image source={Icons['fi-rr-angle-left']} style={addPromoScreenStyles.backIcon} />
         </TouchableOpacity>
 
         <Text style={addPromoScreenStyles.headerTitle}>Add Promo</Text>
 
-        <TouchableOpacity style={addPromoScreenStyles.searchButton}>
+        <TouchableOpacity
+          style={addPromoScreenStyles.searchButton}
+          onPress={() => {
+            if (searchVisible) {
+              setSearchText('');
+            }
+            setSearchVisible(!searchVisible);
+          }}
+        >
           <Image
-            source={Icons['fi-rr-search']}
+            source={Icons[searchVisible ? 'fi-rr-cross' : 'fi-rr-search']}
             style={addPromoScreenStyles.searchIcon}
           />
         </TouchableOpacity>
       </View>
 
+      {/* 🔍 Animated Search Bar */}
+      <Animated.View
+        style={{
+          height: searchAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, moderateScale(60)],
+          }),
+          overflow: 'hidden',
+          marginHorizontal: moderateScale(16),
+          borderWidth: 0,
+        }}
+      >
+        <CustomInput
+          customPlaceholder='Search promo...'
+          value={searchText}
+          secureTextEntry={false}
+          onChangeText={setSearchText}
+          leftIcon={<></>}
+          rightIcon={<></>}
+        />
+      </Animated.View>
+
+      {/* List */}
       <ScrollView style={addPromoScreenStyles.content} showsVerticalScrollIndicator={false}>
-        {promoOptions.map(renderPromoOption)}
+        {filteredPromos.map(renderPromoOption)}
       </ScrollView>
 
-      {/* Footer - Apply Button */}
+      {/* Footer */}
       <View style={addPromoScreenStyles.footer}>
         <CustomButton
           title="Apply"
@@ -120,4 +169,4 @@ const AddPromoScreen = () => {
   );
 };
 
-export default AddPromoScreen; 
+export default AddPromoScreen;

@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   Image,
   StatusBar,
+  Animated,
+  Easing,
 } from 'react-native';
 import { Icons } from '../../assets/qcIcons/qcIcons';
 import { moderateScale } from '../../utils/deviceConfig';
@@ -19,59 +21,79 @@ import { removeFromCart, updateQuantity } from '../../redux/reducers/cart';
 import { RootState } from '../../redux/reducers';
 import RBBottomSheet from '../../components/custom-BottomSheet/custom-BottomSheet';
 import CustomButton from '../../components/custom-Button/button';
-
-interface CartItem {
-  id: number;
-  title: string;
-  price: number;
-  image: string;
-  quantity: number;
-}
+import CustomInput from '../../components/custom-Input/input-field';
 
 const CartScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const bottomSheetRef = useRef(null);
-  const { cartItems, totalAmount } = useSelector((state: RootState) => state.cartReducer);
-  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<CartItem | null>(null);
+  const inputAnim = useRef(new Animated.Value(0)).current;
 
-  const handleUpdateQuantity = (itemId: number, newQuantity: number) => {
+  const { cartItems, totalAmount } = useSelector((state: RootState) => state.cartReducer);
+
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [searchVisible, setSearchVisible] = useState(false);
+  const [search, setSearch] = useState('');
+
+  const handleToggleSearch = () => {
+    const toValue = searchVisible ? 0 : 1;
+    setSearchVisible(!searchVisible);
+    Animated.timing(inputAnim, {
+      toValue,
+      duration: 200,
+      useNativeDriver: false,
+      easing: Easing.out(Easing.ease),
+    }).start();
+  };
+
+  const handleUpdateQuantity = (itemId, newQuantity) => {
     dispatch(updateQuantity({ itemId, quantity: newQuantity }));
   };
 
-  const handleRemoveItem = (item: CartItem) => {
+  const handleRemoveItem = (item) => {
     setItemToDelete(item);
-    bottomSheetRef.current?.open()
-    // setDeleteModalVisible(true);
+    bottomSheetRef.current?.open();
   };
 
   const handleConfirmDelete = () => {
     if (itemToDelete) {
       dispatch(removeFromCart(itemToDelete.id));
-      // setDeleteModalVisible(false);
-      bottomSheetRef.current?.close()
+      bottomSheetRef.current?.close();
       setItemToDelete(null);
     }
   };
 
   const handleCancelDelete = () => {
-    // setDeleteModalVisible(false);
-    bottomSheetRef.current?.close()
+    bottomSheetRef.current?.close();
     setItemToDelete(null);
   };
 
   const handleCheckout = () => {
-    navigation.navigate('Checkout' as never);
+    navigation.navigate('Checkout');
   };
 
-  const renderCartItem = ({ item }: { item: CartItem }) => (
+  const filteredCartItems = cartItems.filter(item =>
+    item.title?.toLowerCase().includes(search.trim().toLowerCase())
+  );
+
+  const renderCartItem = ({ item }) => (
     <CartItemCard
       item={item}
-      onQuantityChange={(newQuantity) => handleUpdateQuantity(item.id, newQuantity)}
+      onQuantityChange={(newQty) => handleUpdateQuantity(item.id, newQty)}
       onRemove={() => handleRemoveItem(item)}
     />
   );
+
+  const inputHeight = inputAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, moderateScale(60)],
+  });
+
+  const inputOpacity = inputAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 1],
+  });
 
   return (
     <SafeAreaView style={cartScreenStyles.container}>
@@ -83,24 +105,31 @@ const CartScreen = () => {
           style={cartScreenStyles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Image
-            source={Icons['fi-rr-angle-left']}
-            style={cartScreenStyles.backIcon}
-          />
+          <Image source={Icons['fi-rr-angle-left']} style={cartScreenStyles.backIcon} />
         </TouchableOpacity>
-        
+
         <Text style={cartScreenStyles.headerTitle}>My Cart</Text>
 
-        <TouchableOpacity style={cartScreenStyles.searchButton}>
-          <Image
-            source={Icons['fi-rr-search']}
-            style={cartScreenStyles.searchIcon}
-          />
+        <TouchableOpacity style={cartScreenStyles.searchButton} onPress={handleToggleSearch}>
+          <Image source={Icons[searchVisible ? 'fi-rr-cross' : 'fi-rr-search']}
+            style={cartScreenStyles.searchIcon} />
         </TouchableOpacity>
       </View>
 
+      {/* 🔍 Animated Search Input */}
+      <Animated.View style={{ height: inputHeight, opacity: inputOpacity, overflow: 'hidden', marginHorizontal: moderateScale(16) }}>
+        <CustomInput
+          customPlaceholder="Search in cart..."
+          value={search}
+          secureTextEntry={false}
+          onChangeText={(txt) => setSearch(txt)}
+          leftIcon={<></>}
+          rightIcon={<></>}
+        />
+      </Animated.View>
+
       {/* Cart Items */}
-      {cartItems.length === 0 ? (
+      {filteredCartItems.length === 0 ? (
         <View style={cartScreenStyles.emptyCartContainer}>
           <Image source={Icons['fi-rr-shopping-bag']} style={cartScreenStyles.emptyCartIcon} />
           <Text style={cartScreenStyles.emptyCartText}>Your cart is empty</Text>
@@ -108,7 +137,7 @@ const CartScreen = () => {
         </View>
       ) : (
         <FlatList
-          data={cartItems}
+          data={filteredCartItems}
           renderItem={renderCartItem}
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={cartScreenStyles.cartList}
@@ -116,7 +145,7 @@ const CartScreen = () => {
         />
       )}
 
-      {/* Footer - Total and Checkout */}
+      {/* Footer */}
       {cartItems.length > 0 && (
         <View style={cartScreenStyles.footer}>
           <View style={cartScreenStyles.totalSection}>
@@ -125,14 +154,18 @@ const CartScreen = () => {
               ₹{totalAmount.toLocaleString('en-IN')}
             </Text>
           </View>
-          <CustomButton icons={<Image
-            source={Icons['fi-rr-shopping-bag']}
-            style={cartScreenStyles.checkoutIcon}
+          <CustomButton
+            icons={
+              <Image source={Icons['fi-rr-shopping-bag']} style={cartScreenStyles.checkoutIcon} />
+            }
+            onPress={handleCheckout}
+            title="Checkout"
+            textStyle={cartScreenStyles.checkoutText}
+            containerStyle={cartScreenStyles.checkoutButton}
           />
-          }
-            onPress={handleCheckout} title='Checkout' textStyle={cartScreenStyles.checkoutText} containerStyle={cartScreenStyles.checkoutButton} />
         </View>
       )}
+
       <RBBottomSheet
         ref={bottomSheetRef}
         child={
@@ -152,4 +185,4 @@ const CartScreen = () => {
   );
 };
 
-export default CartScreen; 
+export default CartScreen;

@@ -17,6 +17,7 @@ import { checkoutScreenStyles } from './checkout-styles';
 import { RootState } from '../../redux/reducers';
 import CustomButton from '../../components/custom-Button/button';
 import { isObject } from 'formik';
+import { IMG } from '../../assets/qcImages/qxImages';
 
 interface CartItem {
   id: number;
@@ -51,7 +52,7 @@ const CheckoutScreen = () => {
     navigation.navigate('AddPromo' as never);
   };
 
-  const handleCheckout = () => {
+  const handlePayment = () => {
     // TODO: Implement payment/order confirmation
     console.log('Proceeding to payment...');
   };
@@ -212,9 +213,8 @@ const CheckoutScreen = () => {
                 <>
                   <View style={checkoutScreenStyles.promoIconContainer}>
                     <Image
-                      source={Icons['fi-rr-ticket']}
+                      source={IMG['QC-mart-promo-card']}
                       style={checkoutScreenStyles.promoIcon}
-                      tintColor={'#22C55E'}
                     />
                   </View>
 
@@ -250,30 +250,60 @@ const CheckoutScreen = () => {
             </TouchableOpacity>
           </View>
           <View style={checkoutScreenStyles.dividerLine} />
+
+          {/* Price Breakdown Section */}
+          <View style={checkoutScreenStyles.section}>
+            <Text style={checkoutScreenStyles.sectionTitle}>Price Breakdown</Text>
+
+            <View style={checkoutScreenStyles.priceBreakdownCard}>
+              <View style={checkoutScreenStyles.priceRow}>
+                <Text style={checkoutScreenStyles.priceLabel}>Amount</Text>
+                <Text style={checkoutScreenStyles.priceValue}>
+                  ₹{totalAmount.toLocaleString('en-IN')}
+                </Text>
+              </View>
+
+              <View style={checkoutScreenStyles.priceRow}>
+                <Text style={checkoutScreenStyles.priceLabel}>Shipping</Text>
+                <Text style={checkoutScreenStyles.priceValue}>
+                  ₹{selectedShippingOption?.cost || 0}
+                </Text>
+              </View>
+
+              {selectedPromo && (
+                <View style={checkoutScreenStyles.priceRow}>
+                  <Text style={checkoutScreenStyles.priceLabel}>Promo</Text>
+                  <Text style={checkoutScreenStyles.promoDiscountValue}>
+                    -₹{((totalAmount + (selectedShippingOption?.cost || 0)) * (selectedPromo.discount / 100)).toFixed(2)}
+                  </Text>
+                </View>
+              )}
+
+              <View style={checkoutScreenStyles.dividerLine} />
+
+              <View style={checkoutScreenStyles.priceRow}>
+                <Text style={checkoutScreenStyles.totalLabel}>Total</Text>
+                <Text style={checkoutScreenStyles.totalValue}>
+                  ₹{(() => {
+                    const subtotal = totalAmount + (selectedShippingOption?.cost || 0);
+                    const discount = selectedPromo ? (subtotal * (selectedPromo?.discount / 100)) : 0;
+                    return (subtotal - discount).toFixed(2);
+                  })().toLocaleString('en-IN')}
+                </Text>
+              </View>
+            </View>
+          </View>
         </View>
 
 
       </ScrollView>
       {/* Footer - Total and Checkout */}
       <View style={checkoutScreenStyles.footer}>
-        <View style={checkoutScreenStyles.totalSection}>
-          <Text style={checkoutScreenStyles.totalLabel}>Total Price</Text>
-          <Text style={checkoutScreenStyles.totalAmount}>
-            ₹{(totalAmount).toLocaleString('en-IN')}
-          </Text>
-        </View>
-
         <CustomButton
-          title="Checkout"
-          onPress={handleCheckout}
+          title="Continue To Payment"
+          onPress={handlePayment}
           containerStyle={checkoutScreenStyles.checkoutButton}
           textStyle={checkoutScreenStyles.checkoutText}
-          icons={
-            <Image
-              source={Icons['fi-rr-shopping-bag']}
-              style={checkoutScreenStyles.checkoutIcon}
-            />
-          }
         />
       </View>
     </SafeAreaView>

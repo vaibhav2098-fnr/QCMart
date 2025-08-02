@@ -44,3 +44,15 @@ export const isEmptyObj = (obj = {}) => {
     Object.keys(obj).length === 0
   );
 };
+
+
+export const transformIconName = (backendIcon: string): string => {
+  if (!backendIcon) return '';
+
+  // Trim, split, and extract the actual icon name
+  const parts = backendIcon.trim().split(' ');
+  const baseIcon = parts.pop()?.replace(/^ti-/, '') || '';
+
+  // Return new prefix with icon
+  return `fi-rr-${baseIcon}`;
+};

@@ -45,8 +45,8 @@ const CustomCarousel = ({ data }: any) => {
                 </TouchableOpacity>
             </View>
             <View style={styles.right}>
-                <Image source={IMG['QC-mart-logo']} style={styles.circle} resizeMode="contain" />
-                <Image source={item.image} style={styles.image} resizeMode="contain" />
+                <Image source={item.image} style={styles.circle} resizeMode="contain" />
+                {/* <Image source={IMG['QC-mart-logo']} style={styles.circle} resizeMode="contain" /> */}
             </View>
         </View>
     );
@@ -119,8 +119,8 @@ const styles = StyleSheet.create({
     },
     right: {
         alignItems: 'center',
-        borderWidth: 2,
-        borderColor: '#000',
+        borderWidth: 1,
+        borderColor: '#fff',
         borderRadius: moderateScale(140)
     },
     image: {

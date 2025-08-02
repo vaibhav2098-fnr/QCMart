@@ -212,7 +212,6 @@ export const checkoutScreenStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    width: moderateScale(220),
   },
   checkoutText: {
     color: '#fff',
@@ -301,16 +300,14 @@ export const checkoutScreenStyles = StyleSheet.create({
     width: moderateScale(40),
     height: moderateScale(40),
     borderRadius: moderateScale(20),
-    backgroundColor: '#F0F6FB',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: moderateScale(12),
   },
   promoIcon: {
-    width: moderateScale(20),
-    height: moderateScale(20),
+    width: moderateScale(48),
+    height: moderateScale(48),
     resizeMode: 'contain',
-    tintColor: '#666',
   },
   promoDetails: {
     flex: 1,
@@ -336,5 +333,45 @@ export const checkoutScreenStyles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#22C55E',
     marginRight: moderateScale(8),
+  },
+  priceBreakdownCard: {
+    backgroundColor: '#fff',
+    borderRadius: moderateScale(12),
+    padding: moderateScale(16),
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  priceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: moderateScale(8),
+  },
+  priceLabel: {
+    fontSize: moderateScale(14),
+    color: '#666',
+    fontWeight: '500',
+  },
+  priceValue: {
+    fontSize: moderateScale(14),
+    color: '#09090A',
+    fontWeight: '600',
+  },
+  promoDiscountValue: {
+    fontSize: moderateScale(14),
+    color: '#22C55E',
+    fontWeight: '600',
+  },
+  totalLabel: {
+    fontSize: moderateScale(16),
+    color: '#09090A',
+    fontWeight: 'bold',
+  },
+  totalValue: {
+    fontSize: moderateScale(16),
+    color: '#09090A',
+    fontWeight: 'bold',
   },
 }); 

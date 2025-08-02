@@ -5,27 +5,27 @@ export const DATA = [
     {
         id: '1',
         title: '20% OFF DURING\nTHE WEEKEND',
-        image: IMG['QC-mart-logo'],
+        image: {uri:'https://techterms.com/img/xl/laptop_586.png'},
     },
     {
         id: '2',
         title: 'Thinking Differently\nwith VR',
-        image: IMG['QC-mart-logo'],
+        image: {uri:'https://techterms.com/img/xl/laptop_586.png'},
     },
     {
         id: '3',
         title: 'Upgrade Your\nExperience Now',
-        image: IMG['QC-mart-logo'],
+        image: {uri:'https://techterms.com/img/xl/laptop_586.png'},
     },
     {
         id: '4',
         title: 'Upgrade Your\nExperience Now',
-        image: IMG['QC-mart-logo'],
+        image: {uri:'https://techterms.com/img/xl/laptop_586.png'},
     },
     {
         id: '5',
         title: 'Upgrade Your\nExperience Now',
-        image: IMG['QC-mart-logo'],
+        image: {uri:'https://techterms.com/img/xl/laptop_586.png'},
     },
 ];
 

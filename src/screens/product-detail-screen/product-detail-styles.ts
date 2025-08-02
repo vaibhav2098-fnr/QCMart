@@ -226,5 +226,13 @@ export const styles = StyleSheet.create({
     marginLeft: moderateScale(16),
     backgroundColor: '#001f4d',
     borderRadius:moderateScale(30),
+    flexDirection:'row'
   },
+  checkoutIcon: {
+    width: moderateScale(20),
+    height: moderateScale(20),
+    resizeMode: 'contain',
+    marginRight: moderateScale(8),
+    tintColor: '#fff',
+  }
 }); 
