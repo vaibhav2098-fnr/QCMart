@@ -33,7 +33,7 @@ const HomeScreen = () => {
   //   dispatch(addToCart(product));
   // };
   return (
-    <View style={{ flex: 1, marginTop: statusBarHeight, paddingHorizontal: moderateScale(16), backgroundColor: '#fff', marginVertical: moderateScale(16) }}>
+    <View style={{ flex: 1, marginTop: statusBarHeight, paddingHorizontal: moderateScale(16), backgroundColor: '#fff' }}>
       <HomeHeader />
       <View style={{ marginVertical: moderateScale(8) }} />
       <CustomInput

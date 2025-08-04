@@ -1,6 +1,8 @@
 import React from 'react';
 import { NativeStackNavigationOptions, createNativeStackNavigator } from '@react-navigation/native-stack';
-import { CategoryScreen, HomeScreen, LoginScreen, MostPopularScreen, OTPScreen, ProductDetailScreen, SignUpScreen, CartScreen, CheckoutScreen, ShippingAddressScreen, ChooseShippingScreen, AddPromoScreen } from '../../screens';
+import { CategoryScreen, HomeScreen, LoginScreen, MostPopularScreen, OTPScreen, ProductDetailScreen, SignUpScreen, CartScreen, CheckoutScreen, ShippingAddressScreen, ChooseShippingScreen, AddPromoScreen, NotificationScreen } from '../../screens';
+import BottomTabNavigator from '../BottomTabNavigator';
+import ComingSoonScreen from '../../screens/comingsoon-screen/comingsoon-screen';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,21 +25,22 @@ export const AuthNavigator: React.FC = () => {
 export const HomeNavigator: React.FC = () => {
   return (
     <Stack.Navigator
-      initialRouteName="home"
+      initialRouteName="MainTabs"
       screenOptions={
         {
           headerShown: false,
         } as NativeStackNavigationOptions
       }>
-      <Stack.Screen name="home" component={HomeScreen} />
+      <Stack.Screen name="MainTabs" component={BottomTabNavigator} />
       <Stack.Screen name="category" component={CategoryScreen} />
       <Stack.Screen name="mostpopular" component={MostPopularScreen} />
       <Stack.Screen name="productDetail" component={ProductDetailScreen} />
-      <Stack.Screen name="cart" component={CartScreen} />
       <Stack.Screen name="Checkout" component={CheckoutScreen} />
       <Stack.Screen name="ShippingAddress" component={ShippingAddressScreen} />
       <Stack.Screen name="ChooseShipping" component={ChooseShippingScreen} />
       <Stack.Screen name="AddPromo" component={AddPromoScreen} />
+      <Stack.Screen name="comingSoon" component={ComingSoonScreen} />
+      <Stack.Screen name="notification" component={NotificationScreen} />
     </Stack.Navigator>
   );
 };

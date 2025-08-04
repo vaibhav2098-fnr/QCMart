@@ -61,7 +61,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route }) => {
 
   const handleAddToCart = () => {
     console.log('Added to cart:', { product, quantity, selectedColor });
-    (navigation as any).navigate('cart')
+    (navigation as any).navigate('MainTabs', { screen: 'Cart' });
     dispatch(addToCart(product));
     // Add to cart logic here
   };

@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { AuthNavigator, HomeNavigator } from './StackNavigator';
 import { NavigationContainer } from '@react-navigation/native';
+import { StatusBar } from 'react-native';
 
 const MainStack = createNativeStackNavigator();
 const Navigation: React.FC = () => {
@@ -10,6 +11,7 @@ const Navigation: React.FC = () => {
 
   return (
     <NavigationContainer>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       <MainStack.Navigator screenOptions={{ headerShown: false }}>
         {!token ? (
           <MainStack.Screen name="Auth" component={AuthNavigator} />
