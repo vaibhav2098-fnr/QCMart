@@ -12,3 +12,4 @@ export { default as ChooseShippingScreen } from './choose-shipping-screen/choose
 export { default as AddPromoScreen } from './add-promo-screen/add-promo-screen';
 export { default as NotificationScreen } from './notification-screen/notification-screen';
 export { default as ProductCategoriesScreen } from './product-categories-screen/product-categories-screen';
+export { default as WebViewScreen } from './webview-screen/webview-screen';

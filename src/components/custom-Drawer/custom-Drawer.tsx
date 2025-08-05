@@ -9,6 +9,7 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Icons } from '../../assets/qcIcons/qcIcons';
 import { moderateScale } from '../../utils/deviceConfig';
 import { CustomAccordion } from '../custom-Accordion';
@@ -30,6 +31,7 @@ interface MenuItem {
 }
 
 const CustomDrawer: React.FC<DrawerProps> = ({ isVisible, onClose }) => {
+  const navigation = useNavigation();
   const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
   const overlayAnim = useRef(new Animated.Value(0)).current;
   const [expandedAccordion, setExpandedAccordion] = useState<string | null>(null);
@@ -65,11 +67,53 @@ const CustomDrawer: React.FC<DrawerProps> = ({ isVisible, onClose }) => {
   }, [isVisible]);
 
   const pagesItems = [
-    { id: '1', title: 'About Us', onPress: () => console.log('About Us pressed') },
-    { id: '2', title: 'Terms Of Use', onPress: () => console.log('Terms Of Use pressed') },
-    { id: '3', title: 'Terms & Conditions', onPress: () => console.log('Terms & Conditions pressed') },
-    { id: '4', title: 'Refund Policy', onPress: () => console.log('Refund Policy pressed') },
-    { id: '5', title: 'Coming Soon', onPress: () => console.log('Coming Soon pressed') },
+    {
+      id: '1', title: 'About Us', onPress: () => {
+        onClose();
+        (navigation as any).navigate('webView', {
+          url: 'https://quickconnectsoft.in/ecom/public/about-us',
+          title: 'About Us'
+        });
+      }
+    },
+    {
+      id: '2',
+      title: 'Terms Of Use',
+      onPress: () => {
+        onClose();
+        (navigation as any).navigate('webView', {
+          url: 'https://quickconnectsoft.in/ecom/public/terms-of-use',
+          title: 'Terms of Use'
+        });
+      }
+    },
+    {
+      id: '3', title: 'Terms & Conditions', onPress: () => {
+        onClose();
+        (navigation as any).navigate('webView', {
+          url: 'https://quickconnectsoft.in/ecom/public/terms-conditions',
+          title: 'Terms & Conditions'
+        });
+      }
+    },
+    {
+      id: '4', title: 'Refund Policy', onPress: () => {
+        onClose();
+        (navigation as any).navigate('webView', {
+          url: 'https://quickconnectsoft.in/ecom/public/refund-policy',
+          title: 'Refund Policy'
+        });
+      }
+    },
+    {
+      id: '5', title: 'Coming Soon', onPress: () => {
+        onClose();
+        (navigation as any).navigate('webView', {
+          url: 'https://quickconnectsoft.in/ecom/public/coming-soon',
+          title: 'Coming Soon'
+        });
+      }
+    },
   ];
 
   const productsItems = [
@@ -109,6 +153,14 @@ const CustomDrawer: React.FC<DrawerProps> = ({ isVisible, onClose }) => {
         setExpandedAccordion(expandedAccordion === 'products' ? null : 'products');
       } else if (item.title === 'INR') {
         setExpandedAccordion(expandedAccordion === 'currency' ? null : 'currency');
+      }
+    } else {
+      if (item.title === 'Contact') {
+        onClose();
+        (navigation as any).navigate('webView', {
+          url: 'https://quickconnectsoft.in/ecom/public/contact',
+          title: 'Coming Soon'
+        });
       }
     }
   };
@@ -187,13 +239,13 @@ const CustomDrawer: React.FC<DrawerProps> = ({ isVisible, onClose }) => {
                   title={item.title}
                   items={
                     item.title === 'Pages' ? pagesItems :
-                    item.title === 'Products' ? productsItems :
-                    item.title === 'INR' ? currencyItems : []
+                      item.title === 'Products' ? productsItems :
+                        item.title === 'INR' ? currencyItems : []
                   }
-                  isExpanded={expandedAccordion === 
+                  isExpanded={expandedAccordion ===
                     (item.title === 'Pages' ? 'pages' :
-                     item.title === 'Products' ? 'products' :
-                     item.title === 'INR' ? 'currency' : '')
+                      item.title === 'Products' ? 'products' :
+                        item.title === 'INR' ? 'currency' : '')
                   }
                   onToggle={() => handleMenuItemPress(item)}
                 />

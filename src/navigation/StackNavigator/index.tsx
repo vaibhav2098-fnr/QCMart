@@ -1,6 +1,6 @@
 import React from 'react';
 import { NativeStackNavigationOptions, createNativeStackNavigator } from '@react-navigation/native-stack';
-import { CategoryScreen, HomeScreen, LoginScreen, MostPopularScreen, OTPScreen, ProductDetailScreen, SignUpScreen, CartScreen, CheckoutScreen, ShippingAddressScreen, ChooseShippingScreen, AddPromoScreen, NotificationScreen, ProductCategoriesScreen } from '../../screens';
+import { CategoryScreen, HomeScreen, LoginScreen, MostPopularScreen, OTPScreen, ProductDetailScreen, SignUpScreen, CartScreen, CheckoutScreen, ShippingAddressScreen, ChooseShippingScreen, AddPromoScreen, NotificationScreen, ProductCategoriesScreen, WebViewScreen } from '../../screens';
 import BottomTabNavigator from '../BottomTabNavigator';
 import ComingSoonScreen from '../../screens/comingsoon-screen/comingsoon-screen';
 
@@ -42,6 +42,7 @@ export const HomeNavigator: React.FC = () => {
       <Stack.Screen name="comingSoon" component={ComingSoonScreen} />
       <Stack.Screen name="notification" component={NotificationScreen} />
       <Stack.Screen name="productCategories" component={ProductCategoriesScreen} />
+      <Stack.Screen name="webView" component={WebViewScreen} />
     </Stack.Navigator>
   );
 };
