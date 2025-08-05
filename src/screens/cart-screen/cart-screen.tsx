@@ -74,7 +74,7 @@ const CartScreen = () => {
   };
 
   const filteredCartItems = cartItems.filter(item =>
-    item.title?.toLowerCase().includes(search.trim().toLowerCase())
+    item.name?.toLowerCase().includes(search.trim().toLowerCase())
   );
 
   const renderCartItem = ({ item }) => (

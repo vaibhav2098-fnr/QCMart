@@ -10,7 +10,7 @@ const ProductCard = (props: any) => {
         title,
         price,
         oldPrice,
-        offer,
+        reviews_count,
         image,
         isFavorite,
         product,
@@ -20,7 +20,7 @@ const ProductCard = (props: any) => {
     return (
         <TouchableOpacity 
             style={styles.card}
-            onPress={() => (navigation as any).navigate('productDetail', { product: product || { title, price, oldPrice, offer, image, isFavorite } })}
+            onPress={() => (navigation as any).navigate('productDetail', { product: product || { title, price, oldPrice, reviews_count, image, isFavorite } })}
         >
             <View style={styles.imageContainer}>
                 <Image source={image} style={styles.productImage} resizeMode="contain" />
@@ -41,7 +41,7 @@ const ProductCard = (props: any) => {
             <View style={styles.priceContainer}>
                 <Text style={styles.price}>₹{price}</Text>
                 {oldPrice ? <Text style={styles.oldPrice}>₹{oldPrice}</Text> : null}
-                {offer ? <Text style={styles.offer}>{offer}</Text> : null}
+                <Text style={styles.reviews_count}> <Image source={Icons['fi-rr-star']} style={styles.starIcon} /> ({reviews_count})</Text>
             </View>
             
             {/* <TouchableOpacity 
@@ -49,7 +49,7 @@ const ProductCard = (props: any) => {
                 onPress={(e) => {
                     e.stopPropagation();
                     if (onAddToCart) {
-                        onAddToCart(product || { title, price, oldPrice, offer, image, isFavorite });
+                        onAddToCart(product || { title, price, oldPrice, reviews_count, image, isFavorite });
                     }
                 }}
             >
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: moderateScale(6),
-        flexWrap:'wrap'
+        flexWrap:'wrap',
     },
     price: {
         fontSize: moderateScale(16),
@@ -129,12 +129,18 @@ const styles = StyleSheet.create({
         marginLeft: moderateScale(8),
         textDecorationLine: 'line-through',
     },
-    offer: {
-        fontSize: moderateScale(8),
+    reviews_count: {
+        fontSize: moderateScale(16),
         color: '#041C45',
         marginLeft: moderateScale(8),
         fontWeight: '600',
     },
+    starIcon: {
+        width: moderateScale(14),
+        height: moderateScale(14),
+        tintColor: '#1e90ff',
+        marginRight: moderateScale(4),
+      }
     // addToCartButton: {
     //     backgroundColor: '#25D366',
     //     borderRadius: moderateScale(6),

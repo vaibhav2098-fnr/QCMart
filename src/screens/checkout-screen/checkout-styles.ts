@@ -131,8 +131,8 @@ export const checkoutScreenStyles = StyleSheet.create({
     borderRadius: moderateScale(25),
   },
   productImage: {
-    width: moderateScale(80),
-    height: moderateScale(80),
+    width: moderateScale(100),
+    height: moderateScale(100),
     borderRadius: moderateScale(8),
     resizeMode:'contain'
   },

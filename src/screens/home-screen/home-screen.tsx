@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FlatList, Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import HomeHeader from './home-header/home-header';
 import { statusBarHeight, transformIconName } from '../../utils/helper';
@@ -17,21 +17,31 @@ import CategoryChips from '../../components/custom-Chips/category-Chips';
 import { useDispatch, useSelector } from 'react-redux';
 import { productCategoriesDataRequest } from '../../redux/reducers/product-categories';
 import { RootState } from '../../redux/reducers';
+import { categoriesProductListDataDataRequest } from '../../redux/reducers/categories-products-list';
+import { getProductsListDataRequest } from '../../redux/reducers/get-products-list';
 
 const HomeScreen = () => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
   const { productCategoriesData = [] } = useSelector((state: RootState) => state.productCategoriesDataReducer);
+  const { getProductsListData } = useSelector((state: RootState) => state.getProductsListDataReducer);
 
   useEffect(() => {
     dispatch(productCategoriesDataRequest({}));
+    dispatch(getProductsListDataRequest({}));
   }, [dispatch]);
 
   const [Search, setSearch] = useState('')
 
-  // const handleAddToCart = (product: any) => {
-  //   dispatch(addToCart(product));
-  // };
+  const handleProductListDataRequest = (productId: any, productName: any) => {
+    dispatch(categoriesProductListDataDataRequest({ id: productId }));
+    (navigation as any).navigate('productCategories', {
+      categoryId: productId,
+      categoryName: productName,
+    })
+  }
+
+
   return (
     <View style={{ flex: 1, marginTop: statusBarHeight, paddingHorizontal: moderateScale(16), backgroundColor: '#fff' }}>
       <HomeHeader />
@@ -51,8 +61,8 @@ const HomeScreen = () => {
         <HomeSeeAll title='Category' onPress={() => (navigation as any).navigate('category')} />
         <FlatList
           scrollEnabled={false}
-          data={productCategoriesData?.slice(0,8)}
-          keyExtractor={(item) => item.id.toString() + item.name}
+          data={productCategoriesData?.slice(0, 8)}
+          keyExtractor={(item) => item?.id.toString() + item?.name}
           numColumns={4}
           contentContainerStyle={{
             paddingHorizontal: 12,
@@ -62,7 +72,11 @@ const HomeScreen = () => {
             justifyContent: 'space-between',
           }}
           renderItem={({ item }) => (
-            <CategoryItem icon={Icons[transformIconName(item?.icon)] || Icons['fi-rr-cube']} title={item.name} onPress={() => console.log(item.name)} />
+            <CategoryItem
+              icon={Icons[transformIconName(item?.icon)] || Icons['fi-rr-cube']}
+              title={item?.name}
+              onPress={() => handleProductListDataRequest(item?.id, item?.name)}
+            />
           )}
         />
 
@@ -71,7 +85,7 @@ const HomeScreen = () => {
         <CategoryChips />
         <FlatList
           scrollEnabled={false}
-          data={products}
+          data={getProductsListData?.data?.slice(0, 4)}
           keyExtractor={(item) => item.id.toString() + item.title}
           numColumns={2}
           contentContainerStyle={{
@@ -82,14 +96,14 @@ const HomeScreen = () => {
           }}
           renderItem={({ item }) => (
             <ProductCard
-              title={item?.title}
+              title={item?.name}
               price={item?.price}
-              oldPrice={item?.originalPrice}
-              offer={item?.discount}
-              image={{ uri: item?.image }}
+              oldPrice={item?.original_price}
+              reviews_count={item?.reviews_count}
+              image={{ uri: item?.image_url }}
               isFavorite={item?.isFavorite}
               product={item}
-              // onAddToCart={handleAddToCart}
+            // onAddToCart={handleAddToCart}
             />
           )}
         />
@@ -113,7 +127,7 @@ const HomeScreen = () => {
               image={{ uri: item?.image }}
               isFavorite={item?.isFavorite}
               product={item}
-              // onAddToCart={handleAddToCart}
+            // onAddToCart={handleAddToCart}
             />
           )}
         />

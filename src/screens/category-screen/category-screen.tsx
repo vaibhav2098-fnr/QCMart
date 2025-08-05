@@ -13,13 +13,15 @@ import { statusBarHeight, transformIconName } from '../../utils/helper';
 import { moderateScale } from '../../utils/deviceConfig';
 import CategoryItem from '../../components/custom-category/custom-category';
 import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/reducers';
 import { Icons } from '../../assets/qcIcons/qcIcons';
 import CustomInput from '../../components/custom-Input/input-field';
+import { categoriesProductListDataDataRequest } from '../../redux/reducers/categories-products-list';
 
 const CategoryScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch()
   const [search, setSearch] = useState('');
   const [searchVisible, setSearchVisible] = useState(false); // 👈 toggle state
   const searchAnim = useRef(new Animated.Value(0)).current;
@@ -45,6 +47,14 @@ const CategoryScreen = () => {
       item.name?.toLowerCase().includes(keyword)
     );
   }, [search, productCategoriesData]);
+
+  const handleProductListDataRequest = (productId: any, productName: any) => {
+    dispatch(categoriesProductListDataDataRequest({ id: productId }));
+    (navigation as any).navigate('productCategories', {
+      categoryId: productId,
+      categoryName: productName,
+    })
+  }
 
   return (
     <SafeAreaView
@@ -107,7 +117,7 @@ const CategoryScreen = () => {
             buttonStyle={{ marginHorizontal: moderateScale(6) }}
             icon={Icons[transformIconName(item?.icon)] || Icons['fi-rr-cube']}
             title={item.name}
-            onPress={() => console.log(item.name)}
+            onPress={() => handleProductListDataRequest(item.id, item.name)}
           />
         )}
         ListEmptyComponent={

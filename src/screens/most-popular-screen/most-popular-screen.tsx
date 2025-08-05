@@ -1,6 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react'
 import { FlatList, Image, SafeAreaView, Text, TouchableOpacity, View } from 'react-native'
-import { products } from '../home-screen/dummy-data'
 import ProductCard from '../../components/custom-ProductCard/product-Card'
 import CustomHeader from '../../components/custom-header/custom-header'
 import { useNavigation } from '@react-navigation/native'
@@ -13,6 +12,8 @@ import RBBottomSheet from '../../components/custom-BottomSheet/custom-BottomShee
 import { styles } from './most-popular-styles'
 import CustomButton from '../../components/custom-Button/button'
 import NotFoundPage from '../../components/custom-NotFoundPage/not-FoundPage'
+import { RootState } from '../../redux/reducers'
+import { useSelector } from 'react-redux'
 
 const MostPopularScreen = () => {
     const navigation = useNavigation()
@@ -21,6 +22,7 @@ const MostPopularScreen = () => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [selectedSort, setSelectedSort] = useState('Most Recent');
     const [selectedRating, setSelectedRating] = useState('All');
+    const { getProductsListData } = useSelector((state: RootState) => state.getProductsListDataReducer);
 
     const resetFilter = () => {
         setSelectedCategory('All');
@@ -34,10 +36,10 @@ const MostPopularScreen = () => {
     };
     // 🔍 Filter logic using useMemo (for performance)
     const filteredData = useMemo(() => {
-        if (search.trim() === '') return products;
-        const lowercased = search.toLowerCase();
-        return products.filter((item) =>
-            item.title.toLowerCase().includes(lowercased)
+        if (search.trim() === '') return getProductsListData?.data;
+        const lowercased = search?.toLowerCase();
+        return getProductsListData?.data?.filter((item) =>
+            item?.name?.toLowerCase().includes(lowercased)
         );
     }, [search]);
 
@@ -114,11 +116,11 @@ const MostPopularScreen = () => {
                     }
                     renderItem={({ item }) => (
                         <ProductCard
-                            title={item?.title}
+                            title={item?.name}
                             price={item?.price}
-                            oldPrice={item?.originalPrice}
-                            offer={item?.discount}
-                            image={{ uri: item?.image }}
+                            oldPrice={item?.original_price}
+                            reviews_count={item?.reviews_count || 0}
+                            image={{ uri: item?.image_url }}
                             isFavorite={item?.isFavorite}
                             product={item}
                         />

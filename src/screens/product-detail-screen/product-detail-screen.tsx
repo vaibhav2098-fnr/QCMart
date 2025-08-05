@@ -82,16 +82,16 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route }) => {
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Product Image Section */}
         <View style={styles.imageSection}>
-          <Image source={{ uri: product.image }} style={styles.productImage} resizeMode="contain" />
+          <Image source={{ uri: product.image_url }} style={styles.productImage} resizeMode="contain" />
           
           {/* Image Carousel Dots */}
-          <View style={styles.carouselDots}>
+          {/* <View style={styles.carouselDots}>
             <View style={[styles.dot, styles.activeDot]} />
             <View style={styles.dot} />
             <View style={styles.dot} />
             <View style={styles.dot} />
             <View style={styles.dot} />
-          </View>
+          </View> */}
         </View>
 
         {/* Product Details Section */}
@@ -99,7 +99,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route }) => {
           {/* Product Title and Favorite */}
           <View style={styles.titleRow}>
             <Text style={styles.productTitle} numberOfLines={2}>
-              {product.title}
+              {product.name}
             </Text>
             <TouchableOpacity onPress={() => setIsFavorite(!isFavorite)} style={styles.favoriteButton}>
               <Image 
@@ -112,12 +112,12 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route }) => {
           {/* Sold Count and Rating */}
           <View style={styles.statsRow}>
             <View style={styles.soldBadge}>
-              <Text style={styles.soldText}>{product.soldCount} sold</Text>
+              <Text style={styles.soldText}>{product.stock_status_label}</Text>
             </View>
             <View style={styles.ratingContainer}>
               <Image source={Icons['fi-rr-star']} style={styles.starIcon} />
               <Text style={styles.ratingText}>{product.rating}</Text>
-              <Text style={styles.reviewText}>({product.reviewCount} reviews)</Text>
+              <Text style={styles.reviewText}>({product.reviews_count} reviews)</Text>
             </View>
           </View>
 

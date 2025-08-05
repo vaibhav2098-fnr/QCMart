@@ -5,9 +5,9 @@ import { Icons } from '../../assets/qcIcons/qcIcons';
 
 interface CartItem {
   id: number;
-  title: string;
+  name: string;
   price: number;
-  image: string;
+  image_url: string;
   quantity: number;
 }
 
@@ -22,16 +22,16 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
   onQuantityChange,
   onRemove,
 }) => {
-  const { title, price, image, quantity } = item;
+  const { name, price, image_url, quantity } = item;
   return (
     <View style={styles.card}>
       <View style={styles.bgProductImage}>
-        <Image source={{uri:image}} style={styles.productImage} />
+        <Image source={{uri:image_url}} style={styles.productImage} />
       </View>
 
 
       <View style={styles.details}>
-        <Text style={styles.title} numberOfLines={2}>{title}</Text>
+        <Text style={styles.title} numberOfLines={2}>{name}</Text>
         <Text style={styles.price}>₹{price.toLocaleString()}</Text>
       </View>
 

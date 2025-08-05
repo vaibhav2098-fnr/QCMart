@@ -60,12 +60,12 @@ const CheckoutScreen = () => {
   const renderOrderItem = ({ item }: { item: CartItem }) => (
     <View style={checkoutScreenStyles.orderItemCard}>
       <View style={checkoutScreenStyles.productImageContainer}>
-        <Image source={{ uri: item.image }} style={checkoutScreenStyles.productImage} />
+        <Image source={{ uri: item.image_url }} style={checkoutScreenStyles.productImage} />
       </View>
 
       <View style={checkoutScreenStyles.productDetails}>
         <Text style={checkoutScreenStyles.productTitle} numberOfLines={2}>
-          {item.title}
+          {item.name}
         </Text>
         <Text style={checkoutScreenStyles.productPrice}>
           ₹{item.price.toLocaleString('en-IN')}

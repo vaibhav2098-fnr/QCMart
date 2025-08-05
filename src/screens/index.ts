@@ -11,3 +11,4 @@ export { default as ShippingAddressScreen } from './shipping-address-screen/ship
 export { default as ChooseShippingScreen } from './choose-shipping-screen/choose-shipping-screen';
 export { default as AddPromoScreen } from './add-promo-screen/add-promo-screen';
 export { default as NotificationScreen } from './notification-screen/notification-screen';
+export { default as ProductCategoriesScreen } from './product-categories-screen/product-categories-screen';
