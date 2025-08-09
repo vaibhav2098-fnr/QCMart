@@ -1,233 +1,202 @@
-import React, { useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Animated, StyleSheet, Dimensions, Image } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { HomeScreen, CartScreen, CategoryScreen } from '../screens';
-import { Icons } from '../assets/qcIcons/qcIcons';
+// CustomBottomTabs.tsx
+import React, { useRef, useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Animated,
+  StyleSheet,
+  Dimensions,
+  Image,
+  Platform,
+} from 'react-native';
 import { moderateScale } from '../utils/deviceConfig';
+import { Icons } from '../assets/qcIcons/qcIcons';
+import { HomeScreen, CartScreen, CategoryScreen } from '../screens';
 import ComingSoonScreen from '../screens/comingsoon-screen/comingsoon-screen';
 
-const Tab = createBottomTabNavigator();
-const { width } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
+interface Props {
+  // If you mount this inside a react-navigation stack and want to forward navigation to children,
+  // pass `navigation` here (optional).
+  navigation?: any;
+}
+
+interface TabItem {
+  key: string;
+  name: string;
+  component: React.ComponentType<any>;
+  label: string;
+  iconKey: string;
+}
+
+/* ---------- TabBarButton (animated press/selected pulse) ---------- */
 interface TabBarButtonProps {
   children: React.ReactNode;
   onPress: () => void;
-  accessibilityState: { selected: boolean };
+  selected: boolean;
 }
 
-const TabBarButton: React.FC<TabBarButtonProps> = ({ children, onPress, accessibilityState }) => {
+const TabBarButton: React.FC<TabBarButtonProps> = ({ children, onPress, selected }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const opacityAnim = useRef(new Animated.Value(1)).current;
 
-  useEffect(() => {
-    if (accessibilityState.selected) {
+  React.useEffect(() => {
+    if (selected) {
       Animated.sequence([
         Animated.parallel([
-          Animated.timing(scaleAnim, {
-            toValue: 0.8,
-            duration: 100,
-            useNativeDriver: true,
-          }),
-          Animated.timing(opacityAnim, {
-            toValue: 0.7,
-            duration: 100,
-            useNativeDriver: true,
-          }),
+          Animated.timing(scaleAnim, { toValue: 0.85, duration: 100, useNativeDriver: true }),
+          Animated.timing(opacityAnim, { toValue: 0.7, duration: 100, useNativeDriver: true }),
         ]),
         Animated.parallel([
-          Animated.timing(scaleAnim, {
-            toValue: 1.1,
-            duration: 150,
-            useNativeDriver: true,
-          }),
-          Animated.timing(opacityAnim, {
-            toValue: 1,
-            duration: 150,
-            useNativeDriver: true,
-          }),
+          Animated.timing(scaleAnim, { toValue: 1.1, duration: 160, useNativeDriver: true }),
+          Animated.timing(opacityAnim, { toValue: 1, duration: 160, useNativeDriver: true }),
         ]),
-        Animated.timing(scaleAnim, {
-          toValue: 1,
-          duration: 100,
-          useNativeDriver: true,
-        }),
+        Animated.timing(scaleAnim, { toValue: 1, duration: 100, useNativeDriver: true }),
       ]).start();
     }
-  }, [accessibilityState.selected]);
+  }, [selected, scaleAnim, opacityAnim]);
 
   return (
     <TouchableOpacity
       style={styles.tabButton}
       onPress={onPress}
-      activeOpacity={0.8}
+      activeOpacity={0.85}
+      accessibilityRole="button"
     >
-      <Animated.View
-        style={[
-          styles.tabContent,
-          {
-            transform: [{ scale: scaleAnim }],
-            opacity: opacityAnim,
-          },
-        ]}
-      >
+      <Animated.View style={{ transform: [{ scale: scaleAnim }], opacity: opacityAnim }}>
         {children}
       </Animated.View>
     </TouchableOpacity>
   );
 };
 
-// Custom Icon Components
-const HomeIcon: React.FC<{ isActive: boolean }> = ({ isActive }) => (
-  <Image source={Icons['fi-rr-home']}
-    resizeMode='contain'
-    style={{ height: moderateScale(24), width: moderateScale(24) }}
-    tintColor={isActive ? "#fff" : '#8C949D'} />
+/* ---------- Icon components (use tintColor via style) ---------- */
+const IconImage: React.FC<{ src: any; isActive: boolean }> = ({ src, isActive }) => (
+  <Image
+    source={src}
+    resizeMode="contain"
+    style={{
+      height: moderateScale(24),
+      width: moderateScale(24),
+      tintColor: isActive ? '#fff' : '#8C949D',
+    }}
+  />
 );
 
-const CartIcon: React.FC<{ isActive: boolean }> = ({ isActive }) => (
-  <Image source={Icons['fi-rr-shopping-bag']}
-    resizeMode='contain'
-    style={{ height: moderateScale(24), width: moderateScale(24) }}
-    tintColor={isActive ? "#fff" : '#8C949D'} />
-);
+/* ---------- Main Custom Bottom Tabs Component ---------- */
+const CustomBottomTabs: React.FC<Props> = ({ navigation }) => {
+  const tabs: TabItem[] = [
+    { key: 'home', name: 'Home', component: HomeScreen, label: 'Home', iconKey: 'fi-rr-home' },
+    { key: 'cart', name: 'Cart', component: CartScreen, label: 'Cart', iconKey: 'fi-rr-shopping-bag' },
+    { key: 'order', name: 'Order', component: ComingSoonScreen, label: 'Order', iconKey: 'fi-rr-shopping-cart' },
+    { key: 'profile', name: 'Profile', component: ComingSoonScreen, label: 'Profile', iconKey: 'fi-rr-user' },
+  ];
 
-const OrderIcon: React.FC<{ isActive: boolean }> = ({ isActive }) => (
-  <Image source={Icons['fi-rr-shopping-cart']}
-    resizeMode='contain'
-    style={{ height: moderateScale(24), width: moderateScale(24) }}
-    tintColor={isActive ? "#fff" : '#8C949D'} />
-);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const translate = useRef(new Animated.Value(0)).current;
+  const animDuration = 300;
 
-const ProfileIcon: React.FC<{ isActive: boolean }> = ({ isActive }) => (
-  <Image source={Icons['fi-rr-user']}
-    resizeMode='contain'
-    style={{ height: moderateScale(24), width: moderateScale(24) }}
-    tintColor={isActive ? "#fff" : '#8C949D'} />
-);
+  const goTo = (index: number) => {
+    if (index === activeIndex) return;
+    // set active tab immediately so tab UI updates while animation runs
+    setActiveIndex(index);
+    Animated.timing(translate, {
+      toValue: -index * SCREEN_WIDTH,
+      duration: animDuration,
+      useNativeDriver: true,
+    }).start();
+  };
 
-const CustomTabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
   return (
-    <View style={styles.tabBarContainer}>
-      <View style={styles.tabBar}>
-        {state.routes.map((route: any, index: number) => {
-          const { options } = descriptors[route.key];
-          const label = options.tabBarLabel ?? options.title ?? route.name;
-          const isFocused = state.index === index;
-
-          const onPress = () => {
-            const event = navigation.emit({
-              type: 'tabPress',
-              target: route.key,
-              canPreventDefault: true,
-            });
-
-            if (!isFocused && !event.defaultPrevented) {
-              navigation.navigate(route.name);
-            }
-          };
-
-          const getIcon = () => {
-            switch (route.name) {
-              case 'Home':
-                return <HomeIcon isActive={isFocused} />;
-              case 'Cart':
-                return <CartIcon isActive={isFocused} />;
-              case 'Order':
-                return <OrderIcon isActive={isFocused} />;
-              case 'Profile':
-                return <ProfileIcon isActive={isFocused} />;
-              default:
-                return null;
-            }
-          };
-
+    <View style={styles.outerContainer}>
+      {/* Screens wrapper — horizontally arranged */}
+      <Animated.View
+        style={[
+          styles.screensRow,
+          {
+            width: SCREEN_WIDTH * tabs.length,
+            transform: [{ translateX: translate }],
+          },
+        ]}
+      >
+        {tabs.map((t, i) => {
+          const ScreenComponent = t.component;
           return (
-            <TabBarButton
-              key={route.key}
-              onPress={onPress}
-              accessibilityState={{ selected: isFocused }}
-            >
-              <View style={styles.tabItem}>
-                <View style={[styles.iconContainer, isFocused && styles.activeIconContainer]}>
-                  {getIcon()}
-                </View>
-                <Text style={[styles.tabLabel, isFocused && styles.activeTabLabel]}>
-                  {label}
-                </Text>
-              </View>
-            </TabBarButton>
+            <View key={t.key} style={[styles.screenPane, { width: SCREEN_WIDTH }]}>
+              {/* forward navigation prop if given */}
+              <ScreenComponent navigation={navigation} />
+            </View>
           );
         })}
+      </Animated.View>
+
+      {/* Floating tab bar */}
+      <View style={styles.tabBarContainer}>
+        <View style={styles.tabBar}>
+          {tabs.map((t, i):any => {
+            const isFocused = i === activeIndex;
+            return (
+              <TabBarButton key={t.key} onPress={() => goTo(i)} selected={isFocused}>
+                <View style={styles.tabItem}>
+                  <View style={[styles.iconContainer, isFocused && styles.activeIconContainer]}>
+                    <IconImage src={Icons[t.iconKey]} isActive={isFocused} />
+                    {isFocused && (
+                      <Text style={[styles.tabLabel, styles.activeTabLabel]}>{t.label}</Text>
+                    )}
+                  </View>
+                </View>
+              </TabBarButton>
+            );
+          })}
+        </View>
       </View>
     </View>
   );
 };
 
-const BottomTabNavigator: React.FC = () => {
-  return (
-    <Tab.Navigator
-      tabBar={props => <CustomTabBar {...props} />}
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          tabBarLabel: 'Home',
-        }}
-      />
-      <Tab.Screen
-        name="Cart"
-        component={CartScreen}
-        options={{
-          tabBarLabel: 'Cart',
-        }}
-      />
-      <Tab.Screen
-        name="Order"
-        component={ComingSoonScreen}
-        options={{
-          tabBarLabel: 'Order',
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={ComingSoonScreen}
-        options={{
-          tabBarLabel: 'Profile',
-        }}
-      />
-    </Tab.Navigator>
-  );
-};
+export default CustomBottomTabs;
 
+/* ---------- Styles ---------- */
 const styles = StyleSheet.create({
+  outerContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  screensRow: {
+    flexDirection: 'row',
+    height: '100%',
+  },
+  screenPane: {
+    height: '100%',
+    // remove padding bottom so content doesn't hide behind tabbar; if needed, add marginBottom
+    paddingBottom: moderateScale(90),
+  },
+
+  /* Tab bar styles */
   tabBarContainer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: '#f5f5f5',
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -4,
-    },
+    shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 10,
-    zIndex: 10,
+    elevation: 12,
+    zIndex: 50,
   },
   tabBar: {
     flexDirection: 'row',
     backgroundColor: 'white',
-    paddingHorizontal: moderateScale(10),
+    paddingHorizontal: moderateScale(18),
     paddingTop: moderateScale(10),
-    paddingBottom: moderateScale(20),
+    paddingBottom: Platform.OS === 'ios' ? moderateScale(28) : moderateScale(24),
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -6,
-    },
-    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: -6 },
+    shadowOpacity: 0.12,
     shadowRadius: 8,
     elevation: 20,
   },
@@ -236,25 +205,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  tabContent: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   tabItem: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   iconContainer: {
-    width: moderateScale(46),
-    height: moderateScale(46),
     borderRadius: moderateScale(50),
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
+    paddingHorizontal: moderateScale(8),
+    paddingVertical: moderateScale(8),
   },
   activeIconContainer: {
     backgroundColor: '#041C45',
-    width: moderateScale(46),
-    height: moderateScale(46),
+    width: moderateScale(110),
+    height: moderateScale(56),
     borderRadius: moderateScale(50),
     alignItems: 'center',
     justifyContent: 'center',
@@ -265,9 +231,8 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   activeTabLabel: {
-    color: '#1e3a8a',
-    fontWeight: '600',
+    color: '#fff',
+    fontWeight: '400',
+    marginLeft: moderateScale(8),
   },
 });
-
-export default BottomTabNavigator; 

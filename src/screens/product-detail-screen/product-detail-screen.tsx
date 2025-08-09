@@ -7,15 +7,17 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
+  useWindowDimensions,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { moderateScale } from '../../utils/deviceConfig';
-import { statusBarHeight } from '../../utils/helper';
+import { getDeviceWidth, statusBarHeight } from '../../utils/helper';
 import { Icons } from '../../assets/qcIcons/qcIcons';
 import CustomButton from '../../components/custom-Button/button';
 import { styles } from './product-detail-styles';
 import { addToCart } from '../../redux/reducers/cart';
 import { useDispatch } from 'react-redux';
+import RenderHTML from 'react-native-render-html';
 
 interface ProductDetailScreenProps {
   route?: {
@@ -61,17 +63,24 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route }) => {
 
   const handleAddToCart = () => {
     console.log('Added to cart:', { product, quantity, selectedColor });
+    
+    // Create cart item with all selected options
+    const cartItem = {
+      ...product,
+      quantity: quantity,
+      selectedColor: selectedColor,
+      totalPrice: product.price * quantity,
+    };
+    
+    dispatch(addToCart(cartItem));
     (navigation as any).navigate('MainTabs', { screen: 'Cart' });
-    dispatch(addToCart(product));
-    // Add to cart logic here
   };
-
   const totalPrice = product.price * quantity;
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      
+
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
@@ -83,7 +92,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route }) => {
         {/* Product Image Section */}
         <View style={styles.imageSection}>
           <Image source={{ uri: product.image_url }} style={styles.productImage} resizeMode="contain" />
-          
+
           {/* Image Carousel Dots */}
           {/* <View style={styles.carouselDots}>
             <View style={[styles.dot, styles.activeDot]} />
@@ -102,9 +111,9 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route }) => {
               {product.name}
             </Text>
             <TouchableOpacity onPress={() => setIsFavorite(!isFavorite)} style={styles.favoriteButton}>
-              <Image 
-                source={isFavorite ? Icons['fi-sr-heart'] : Icons['fi-rr-heart']} 
-                style={[styles.favoriteIcon, { tintColor: isFavorite ? 'red' : '#ccc' }]} 
+              <Image
+                source={isFavorite ? Icons['fi-sr-heart'] : Icons['fi-rr-heart']}
+                style={[styles.favoriteIcon, { tintColor: isFavorite ? 'red' : '#ccc' }]}
               />
             </TouchableOpacity>
           </View>
@@ -121,12 +130,14 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route }) => {
             </View>
           </View>
 
-          <View style={styles.divider}/>
+          <View style={styles.divider} />
 
           {/* Description */}
           <View style={styles.descriptionSection}>
             <Text style={styles.sectionTitle}>Description</Text>
-            <Text style={styles.descriptionText}>{product.description}</Text>
+            <RenderHTML contentWidth={getDeviceWidth() * 1} source={{ html: product?.description }} />
+            <View style={{ marginVertical: moderateScale(16) }} />
+            <RenderHTML contentWidth={getDeviceWidth() * 1} source={{ html: product?.content }} />
           </View>
 
           {/* Color Selection */}
@@ -155,16 +166,16 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route }) => {
           <View style={styles.quantitySection}>
             <Text style={styles.sectionTitle}>Quantity</Text>
             <View style={styles.quantitySelector}>
-              <TouchableOpacity 
-                style={styles.quantityButton} 
+              <TouchableOpacity
+                style={styles.quantityButton}
                 onPress={() => handleQuantityChange(false)}
                 disabled={quantity <= 1}
               >
                 <Image source={Icons['fi-rr-minus']} style={styles.quantityIcon} />
               </TouchableOpacity>
               <Text style={styles.quantityText}>{quantity}</Text>
-              <TouchableOpacity 
-                style={styles.quantityButton} 
+              <TouchableOpacity
+                style={styles.quantityButton}
                 onPress={() => handleQuantityChange(true)}
               >
                 <Image source={Icons['fi-rr-plus']} style={styles.quantityIcon} />

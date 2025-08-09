@@ -9,6 +9,8 @@ interface CartItem {
   price: number;
   image_url: string;
   quantity: number;
+  selectedColor?: string;
+  totalPrice?: number;
 }
 
 interface CartItemCardProps {
@@ -22,7 +24,7 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
   onQuantityChange,
   onRemove,
 }) => {
-  const { name, price, image_url, quantity } = item;
+  const { name, price, image_url, quantity, selectedColor, totalPrice } = item;
   return (
     <View style={styles.card}>
       <View style={styles.bgProductImage}>
@@ -33,6 +35,12 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
       <View style={styles.details}>
         <Text style={styles.title} numberOfLines={2}>{name}</Text>
         <Text style={styles.price}>₹{price.toLocaleString()}</Text>
+        {selectedColor && (
+          <Text style={styles.colorText}>Color: {selectedColor}</Text>
+        )}
+        {totalPrice && (
+          <Text style={styles.totalPriceText}>Total: ₹{totalPrice.toLocaleString()}</Text>
+        )}
       </View>
 
       <View style={styles.actions}>
@@ -95,6 +103,17 @@ const styles = StyleSheet.create({
   price: {
     fontSize: moderateScale(15),
     fontWeight: 'bold',
+  },
+  colorText: {
+    fontSize: moderateScale(12),
+    color: '#666',
+    marginTop: moderateScale(2),
+  },
+  totalPriceText: {
+    fontSize: moderateScale(12),
+    color: '#25D366',
+    fontWeight: '600',
+    marginTop: moderateScale(2),
   },
   actions: {
     alignItems: 'flex-end',

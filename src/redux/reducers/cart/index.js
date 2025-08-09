@@ -15,9 +15,14 @@ export const cartSlice = createSlice({
       const existingItem = state.cartItems.find(item => item.id === newItem.id);
       
       if (existingItem) {
-        existingItem.quantity += 1;
+        // If item already exists, add the new quantity to existing quantity
+        existingItem.quantity += newItem.quantity || 1;
       } else {
-        state.cartItems.push({ ...newItem, quantity: 1 });
+        // If item doesn't exist, add it with the specified quantity
+        state.cartItems.push({ 
+          ...newItem, 
+          quantity: newItem.quantity || 1 
+        });
       }
       
       state.totalItems = state.cartItems.reduce((total, item) => total + item.quantity, 0);
@@ -40,6 +45,8 @@ export const cartSlice = createSlice({
           state.cartItems = state.cartItems.filter(item => item.id !== itemId);
         } else {
           item.quantity = quantity;
+          // Update the totalPrice for this item
+          item.totalPrice = item.price * quantity;
         }
       }
       

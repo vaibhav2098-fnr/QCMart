@@ -48,7 +48,11 @@ const CartScreen = () => {
   };
 
   const handleUpdateQuantity = (itemId, newQuantity) => {
-    dispatch(updateQuantity({ itemId, quantity: newQuantity }));
+    if (newQuantity <= 0) {
+      dispatch(removeFromCart(itemId));
+    } else {
+      dispatch(updateQuantity({ itemId, quantity: newQuantity }));
+    }
   };
 
   const handleRemoveItem = (item) => {

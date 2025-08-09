@@ -56,3 +56,6 @@ export const transformIconName = (backendIcon: string): string => {
   // Return new prefix with icon
   return `fi-rr-${baseIcon}`;
 };
+
+// Export search utilities
+export * from './searchUtils';

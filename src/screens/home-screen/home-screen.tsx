@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { FlatList, Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import HomeHeader from './home-header/home-header';
-import { statusBarHeight, transformIconName } from '../../utils/helper';
+import { statusBarHeight, transformIconName, performSearch } from '../../utils/helper';
 import { moderateScale } from '../../utils/deviceConfig';
 import CustomInput from '../../components/custom-Input/input-field';
 import { Icons } from '../../assets/qcIcons/qcIcons';
@@ -19,6 +19,7 @@ import { productCategoriesDataRequest } from '../../redux/reducers/product-categ
 import { RootState } from '../../redux/reducers';
 import { categoriesProductListDataDataRequest } from '../../redux/reducers/categories-products-list';
 import { getProductsListDataRequest } from '../../redux/reducers/get-products-list';
+import SearchResults from '../../components/custom-SearchResults/custom-SearchResults';
 
 const HomeScreen = () => {
   const navigation = useNavigation()
@@ -31,7 +32,37 @@ const HomeScreen = () => {
     dispatch(getProductsListDataRequest({}));
   }, [dispatch]);
 
-  const [Search, setSearch] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isSearching, setIsSearching] = useState(false)
+
+  // Combine all products from different sources
+  const allProducts = useMemo(() => {
+    const apiProducts = getProductsListData?.data || [];
+    const dummyProducts = products;
+    return [...apiProducts, ...dummyProducts];
+  }, [getProductsListData?.data]);
+
+  // Perform search when query changes
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return { filteredProducts: [], filteredCategories: [] };
+    }
+    return performSearch(allProducts, productCategoriesData, searchQuery);
+  }, [searchQuery, allProducts, productCategoriesData]);
+
+  // Handle search input changes with loading state
+  const handleSearchChange = (text: string) => {
+    setSearchQuery(text);
+    if (text.length > 0) {
+      setIsSearching(true);
+      // Simulate a small delay for better UX
+      setTimeout(() => setIsSearching(false), 200);
+    } else {
+      setIsSearching(false);
+    }
+  };
+
+
 
   const handleProductListDataRequest = (productId: any, productName: any) => {
     dispatch(categoriesProductListDataDataRequest({ id: productId }));
@@ -42,19 +73,50 @@ const HomeScreen = () => {
   }
 
 
+
+  const handleCategoryPress = (category: any) => {
+    handleProductListDataRequest(category.id, category.name);
+  }
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+  }
+
+
   return (
     <View style={{ flex: 1, marginTop: statusBarHeight, paddingHorizontal: moderateScale(16), backgroundColor: '#fff' }}>
       <HomeHeader />
       <View style={{ marginVertical: moderateScale(8) }} />
       <CustomInput
-        customPlaceholder='Search....'
-        value={Search}
+        customPlaceholder='Search products and categories...'
+        value={searchQuery}
         secureTextEntry={false}
-        onChangeText={(txt) => setSearch(txt)}
+        onChangeText={handleSearchChange}
         leftIcon={<Image tintColor={'#8C949D'} source={Icons['fi-rr-search']} style={{ height: 24, width: 24, resizeMode: 'contain' }} />}
-        rightIcon={<TouchableOpacity><Image source={Icons['fi-rr-filter']} style={{ height: 24, width: 24, resizeMode: 'contain' }} /></TouchableOpacity>}
+        rightIcon={
+          searchQuery.length > 0 ? (
+            <TouchableOpacity onPress={handleClearSearch}>
+              <Image source={Icons['fi-rr-cross']} style={{ height: 24, width: 24, resizeMode: 'contain' }} />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity>
+              <Image source={Icons['fi-rr-filter']} style={{ height: 24, width: 24, resizeMode: 'contain' }} />
+            </TouchableOpacity>
+          )
+        }
       />
-      <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+      
+      {searchQuery.length > 0 ? (
+        <SearchResults
+          searchQuery={searchQuery}
+          products={searchResults.filteredProducts}
+          categories={searchResults.filteredCategories}
+          onCategoryPress={handleCategoryPress}
+          onClearSearch={handleClearSearch}
+          isLoading={isSearching}
+        />
+      ) : (
+        <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
         <CustomCarousel data={DATA} />
 
 
@@ -134,7 +196,8 @@ const HomeScreen = () => {
 
         <SummerSaleBanner />
 
-      </ScrollView>
+        </ScrollView>
+      )}
     </View>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { Icons } from '../../assets/qcIcons/qcIcons';
 import { moderateScale } from '../../utils/deviceConfig';
+import { CustomAccordion } from '../custom-Accordion';
 
 const { width: screenWidth } = Dimensions.get('window');
 const DRAWER_WIDTH = screenWidth * 0.8;
@@ -25,12 +26,15 @@ interface MenuItem {
   id: string;
   title: string;
   icon?: string;
+  hasSubmenu?: boolean;
+  isSelected?: boolean;
 }
 
 const CustomDrawer: React.FC<DrawerProps> = ({ isVisible, onClose }) => {
   const navigation = useNavigation();
   const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
   const overlayAnim = useRef(new Animated.Value(0)).current;
+  const [expandedAccordion, setExpandedAccordion] = useState<string | null>(null);
 
   useEffect(() => {
     if (isVisible) {
@@ -62,47 +66,125 @@ const CustomDrawer: React.FC<DrawerProps> = ({ isVisible, onClose }) => {
     }
   }, [isVisible]);
 
+  const pagesItems = [
+    {
+      id: '1', title: 'About Us', onPress: () => {
+        onClose();
+        (navigation as any).navigate('webView', {
+          url: 'https://quickconnectsoft.in/ecom/public/about-us',
+          title: 'About Us'
+        });
+      }
+    },
+    {
+      id: '2',
+      title: 'Terms Of Use',
+      onPress: () => {
+        onClose();
+        (navigation as any).navigate('webView', {
+          url: 'https://quickconnectsoft.in/ecom/public/terms-of-use',
+          title: 'Terms of Use'
+        });
+      }
+    },
+    {
+      id: '3', title: 'Terms & Conditions', onPress: () => {
+        onClose();
+        (navigation as any).navigate('webView', {
+          url: 'https://quickconnectsoft.in/ecom/public/terms-conditions',
+          title: 'Terms & Conditions'
+        });
+      }
+    },
+    {
+      id: '4', title: 'Refund Policy', onPress: () => {
+        onClose();
+        (navigation as any).navigate('webView', {
+          url: 'https://quickconnectsoft.in/ecom/public/refund-policy',
+          title: 'Refund Policy'
+        });
+      }
+    },
+    {
+      id: '5', title: 'Coming Soon', onPress: () => {
+        onClose();
+        (navigation as any).navigate('webView', {
+          url: 'https://quickconnectsoft.in/ecom/public/coming-soon',
+          title: 'Coming Soon'
+        });
+      }
+    },
+  ];
+
+  const productsItems = [
+    { id: '1', title: 'All Products', onPress: () => console.log('All Products pressed') },
+    { id: '2', title: 'Products of Category', onPress: () => console.log('Products of Category pressed') },
+    { id: '3', title: 'Product Single', onPress: () => console.log('Product Single pressed') },
+  ];
+
+  const currencyItems = [
+    { id: '1', title: 'USD', onPress: () => console.log('USD pressed') },
+    { id: '2', title: 'EUR', onPress: () => console.log('EUR pressed') },
+    { id: '3', title: 'GBP', onPress: () => console.log('GBP pressed') },
+  ];
+
   const menuItems: MenuItem[] = [
-    { id: '1', title: 'My Profile', icon: 'fi-rr-user' },
-    { id: '2', title: 'My Order', icon: 'fi-rr-shopping-cart' },
-    { id: '3', title: 'My Wishlist', icon: 'fi-rr-heart' },
-    { id: '4', title: 'About Us', icon: 'fi-rr-info' },
-    { id: '5', title: 'Privacy Policy', icon: 'fi-rr-document' },
-    { id: '6', title: 'Help Center', icon: 'fi-rr-headset' },
-    { id: '7', title: 'Invite Friends', icon: 'fi-rr-smartphone' },
-    { id: '8', title: 'Change Password', icon: 'fi-rr-lock' },
-    { id: '9', title: 'notification', icon: 'fi-rr-bell' },
+    { id: '1', title: 'Home', icon: 'fi-rr-home' },
+    { id: '2', title: 'Pages', hasSubmenu: true },
+    { id: '3', title: 'Products', hasSubmenu: true },
+    { id: '4', title: 'Stores', icon: 'fi-rr-building' },
+    { id: '5', title: 'Blog', icon: 'fi-rr-book' },
+    { id: '6', title: 'FAQs', icon: 'fi-rr-comment-alt' },
+    { id: '7', title: 'Contact', icon: 'fi-rr-smartphone' },
+    { id: '8', title: 'Track your order', icon: 'fi-rr-checkbox', isSelected: true },
+    { id: '9', title: 'Compare', icon: 'fi-rr-chart-histogram' },
+    { id: '10', title: 'Wishlist', icon: 'fi-rr-heart' },
+    { id: '11', title: 'INR', hasSubmenu: true },
   ];
 
   const handleMenuItemPress = (item: MenuItem) => {
     console.log('Menu item pressed:', item.title);
     // Handle menu item navigation here
-    if (item.title === 'About Us') {
-      onClose();
-      (navigation as any).navigate('webView', {
-        url: 'https://quickconnectsoft.in/ecom/public/about-us',
-        title: 'About Us'
-      });
+    if (item.hasSubmenu) {
+      // Toggle accordion for submenu items
+      if (item.title === 'Pages') {
+        setExpandedAccordion(expandedAccordion === 'pages' ? null : 'pages');
+      } else if (item.title === 'Products') {
+        setExpandedAccordion(expandedAccordion === 'products' ? null : 'products');
+      } else if (item.title === 'INR') {
+        setExpandedAccordion(expandedAccordion === 'currency' ? null : 'currency');
+      }
+    } else {
+      if (item.title === 'Contact') {
+        onClose();
+        (navigation as any).navigate('webView', {
+          url: 'https://quickconnectsoft.in/ecom/public/contact',
+          title: 'Coming Soon'
+        });
+      }
     }
   };
 
   const renderMenuItem = (item: MenuItem) => (
     <TouchableOpacity
       key={item.id}
-      style={styles.menuItem}
+      style={[styles.menuItem, item.isSelected && styles.selectedMenuItem]}
       onPress={() => handleMenuItemPress(item)}
     >
       <View style={styles.menuItemContent}>
         {item.icon && (
           <Image
             source={Icons[item.icon as keyof typeof Icons]}
-            style={styles.menuIcon}
+            style={[styles.menuIcon, item.isSelected && styles.selectedMenuIcon]}
           />
         )}
-        <Text style={styles.menuText}>
+        <Text style={[styles.menuText, item.isSelected && styles.selectedMenuText]}>
           {item.title}
         </Text>
       </View>
+      {item.hasSubmenu && (
+        <Image source={Icons['fi-rr-angle-small-right']} style={styles.submenuIcon} />
+      )}
     </TouchableOpacity>
   );
 
@@ -137,36 +219,50 @@ const CustomDrawer: React.FC<DrawerProps> = ({ isVisible, onClose }) => {
         {/* Header */}
         <View style={styles.drawerHeader}>
           <View style={styles.headerContent}>
-            <View style={styles.iconStyle}>
-              <Image source={Icons['fi-rr-user']} style={styles.userIcon} />
-            </View>
+            <Image source={Icons['fi-rr-user']} style={styles.userIcon} />
             <View style={styles.userInfo}>
-              <Text style={styles.userName}>Deepak Rathore</Text>
-              <Text style={styles.userSubtitle}>deepak.rathore31@gmail.com</Text>
+              <Text style={styles.userName}>Welcome Guest</Text>
+              <Text style={styles.userSubtitle}>Role: Customer</Text>
             </View>
           </View>
-          {/* <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Image source={Icons['fi-rr-cross']} style={styles.closeIcon} />
-          </TouchableOpacity> */}
+          </TouchableOpacity>
         </View>
 
         {/* Menu Items */}
         <ScrollView style={styles.menuContainer} showsVerticalScrollIndicator={false}>
           {menuItems.map((item, index) => (
             <View key={item.id}>
-              {renderMenuItem(item)}
+              {item.hasSubmenu ? (
+                <CustomAccordion
+                  title={item.title}
+                  items={
+                    item.title === 'Pages' ? pagesItems :
+                      item.title === 'Products' ? productsItems :
+                        item.title === 'INR' ? currencyItems : []
+                  }
+                  isExpanded={expandedAccordion ===
+                    (item.title === 'Pages' ? 'pages' :
+                      item.title === 'Products' ? 'products' :
+                        item.title === 'INR' ? 'currency' : '')
+                  }
+                  onToggle={() => handleMenuItemPress(item)}
+                />
+              ) : (
+                renderMenuItem(item)
+              )}
               {index < menuItems.length - 1 && <View style={styles.separator} />}
             </View>
           ))}
         </ScrollView>
 
         {/* Footer */}
-        <View style={styles.drawerFooter}>
+        {/* <View style={styles.drawerFooter}>
           <TouchableOpacity style={styles.signInButton}>
-            <Image source={Icons['fi-rr-sign-out']} style={{ height: moderateScale(24), width: moderateScale(24) }} />
-            <Text style={styles.signInText}>Logout</Text>
+            <Text style={styles.signInText}>Sign In</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </Animated.View>
     </>
   );
@@ -201,8 +297,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 10,
-    borderTopRightRadius: moderateScale(32),
-    borderBottomEndRadius: moderateScale(32)
   },
   drawerHeader: {
     flexDirection: 'row',
@@ -210,43 +304,33 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: moderateScale(20),
     paddingVertical: moderateScale(24),
-    backgroundColor: '#041C45',
-    borderTopRightRadius: moderateScale(32),
-    height: moderateScale(110)
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+    backgroundColor: '#F8FAFC',
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
   },
-  iconStyle: {
-    borderColor: 'white',
-    borderWidth: 1,
-    height: moderateScale(68),
-    width: moderateScale(68),
-    borderRadius: 68,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: moderateScale(18)
-  }
-  , userIcon: {
+  userIcon: {
     width: moderateScale(40),
     height: moderateScale(40),
     tintColor: '#6B7280',
+    marginRight: moderateScale(12),
   },
   userInfo: {
     flex: 1,
   },
   userName: {
-    fontSize: moderateScale(14),
-    fontWeight: '700',
-    color: '#FFFFFF',
+    fontSize: moderateScale(16),
+    fontWeight: '600',
+    color: '#111827',
     marginBottom: moderateScale(2),
   },
   userSubtitle: {
-    fontSize: moderateScale(10),
+    fontSize: moderateScale(12),
     color: '#6B7280',
-    fontWeight: '400',
   },
   closeButton: {
     padding: moderateScale(8),
@@ -285,9 +369,9 @@ const styles = StyleSheet.create({
     tintColor: '#3B82F6',
   },
   menuText: {
-    fontSize: moderateScale(12),
+    fontSize: moderateScale(14),
     color: '#374151',
-    fontWeight: '400',
+    fontWeight: '500',
   },
   selectedMenuText: {
     color: '#3B82F6',
@@ -304,23 +388,21 @@ const styles = StyleSheet.create({
     marginHorizontal: moderateScale(20),
   },
   drawerFooter: {
-    borderBottomEndRadius: moderateScale(32),
-    paddingBottom: moderateScale(4),
-    backgroundColor: '#041C45',
+    paddingHorizontal: moderateScale(20),
+    paddingVertical: moderateScale(24),
+    borderTopWidth: 1,
+    borderTopColor: '#F3F4F6',
   },
   signInButton: {
+    backgroundColor: '#3B82F6',
     paddingVertical: moderateScale(12),
-    borderBottomEndRadius: moderateScale(32),
+    borderRadius: moderateScale(8),
     alignItems: 'center',
-    flexDirection: 'row',
-    paddingHorizontal: moderateScale(20),
-    backgroundColor: '#D3D3D3',
   },
   signInText: {
-    color: '#171717',
+    color: '#fff',
     fontSize: moderateScale(14),
-    fontWeight: '500',
-    paddingHorizontal: moderateScale(16),
+    fontWeight: '600',
   },
 });
 
