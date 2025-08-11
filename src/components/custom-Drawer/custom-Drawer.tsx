@@ -76,13 +76,23 @@ const CustomDrawer: React.FC<DrawerProps> = ({ isVisible, onClose }) => {
 
   const handleMenuItemPress = (item: MenuItem) => {
     console.log('Menu item pressed:', item.title);
-    // Handle menu item navigation here
+    if (item.title === 'My Profile') {
+      onClose();
+      (navigation as any).navigate('profile');
+      return;
+    }
+    if (item.title === 'My Order') {
+      onClose();
+      (navigation as any).navigate('myOrders');
+      return;
+    }
     if (item.title === 'About Us') {
       onClose();
       (navigation as any).navigate('webView', {
         url: 'https://quickconnectsoft.in/ecom/public/about-us',
         title: 'About Us'
       });
+      return;
     }
   };
 

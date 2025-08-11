@@ -13,3 +13,5 @@ export { default as AddPromoScreen } from './add-promo-screen/add-promo-screen';
 export { default as NotificationScreen } from './notification-screen/notification-screen';
 export { default as ProductCategoriesScreen } from './product-categories-screen/product-categories-screen';
 export { default as WebViewScreen } from './webview-screen/webview-screen';
+export { default as ProfileScreen } from './profile-screen/profile-screen';
+export { default as MyOrdersScreen } from './my-orders-screen/my-orders-screen';

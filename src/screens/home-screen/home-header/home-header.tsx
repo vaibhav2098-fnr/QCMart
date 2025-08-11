@@ -32,7 +32,7 @@ const HomeHeader = () => {
                         <Image source={Icons['fi-rr-bell']} style={[styles.icon, styles.marginRight]} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => (navigation as any).navigate('MainTabs', { screen: 'Cart' })}>
+                    <TouchableOpacity onPress={() => (navigation as any).navigate('Cart')}>
                         <Image source={Icons['fi-rr-shopping-bag']} style={styles.icon} />
                     </TouchableOpacity>
                 </View>
