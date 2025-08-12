@@ -72,7 +72,11 @@ const MyOrdersScreen: React.FC = () => {
             </View>
             <CustomButton
               title={activeTab === 'ongoing' ? 'Track Order' : 'Leave Review'}
-              onPress={() => { }}
+              onPress={() => {
+                if (activeTab === 'ongoing') {
+                  (navigation as any).navigate('trackOrder');
+                }
+              }}
               containerStyle={styles.trackButton}
               textStyle={styles.trackButtonText}
             />

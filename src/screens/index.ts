@@ -15,3 +15,4 @@ export { default as ProductCategoriesScreen } from './product-categories-screen/
 export { default as WebViewScreen } from './webview-screen/webview-screen';
 export { default as ProfileScreen } from './profile-screen/profile-screen';
 export { default as MyOrdersScreen } from './my-orders-screen/my-orders-screen';
+export { default as TrackOrderScreen } from './track-order-screen/track-order-screen';
