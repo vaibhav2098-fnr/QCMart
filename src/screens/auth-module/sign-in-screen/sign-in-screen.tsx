@@ -1,13 +1,32 @@
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View, Alert } from "react-native";
 import CustomInput from "../../../components/custom-Input/input-field";
 import CustomButton from "../../../components/custom-Button/button";
 import { IMG } from "../../../assets/qcImages/qxImages";
 import { Icons } from "../../../assets/qcIcons/qcIcons";
 import { styles } from "./sign-in-style";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { signInDataRequest, signInDataReset } from "../../../redux/reducers/auth-module/sign-in-screen";
+import { RootState } from "../../../redux/reducers";
+
+// Define navigation types
+type AuthStackParamList = {
+  signUp: undefined;
+  otp: undefined;
+  forgotPassword: undefined;
+};
+
+type RootStackParamList = {
+  Auth: undefined;
+  Home: undefined;
+};
+
+type NavigationProp = {
+  navigate: (screen: keyof RootStackParamList | keyof AuthStackParamList) => void;
+};
 
 // Validation schema
 const loginValidationSchema = Yup.object().shape({
@@ -20,8 +39,14 @@ const loginValidationSchema = Yup.object().shape({
 });
 
 const LoginScreen = () => {
-  const navigation = useNavigation()
+  const navigation = useNavigation<NavigationProp>();
+  const dispatch = useDispatch();
   const [isCheck, setIsCheck] = useState(false);
+
+  // Get auth state from Redux
+  const { isSignInLoading, isSignInSuccess, isSignInFailure, errorMsg } = useSelector(
+    (state: RootState) => state.signInDataReducer
+  );
 
   const formik = useFormik({
     initialValues: {
@@ -31,9 +56,26 @@ const LoginScreen = () => {
     validationSchema: loginValidationSchema,
     onSubmit: (values) => {
       console.log("Login form submitted:", values);
-      // dispatch login action or navigate
+      // Dispatch login action
+      dispatch(signInDataRequest(values));
     },
   });
+
+  // Handle login response
+  useEffect(() => {
+    if (isSignInSuccess) {
+      Alert.alert("Success", "Login successful!");
+      // Navigate to home or next screen
+      navigation.navigate('Home');
+      // Reset the state
+      dispatch(signInDataReset());
+    }
+    
+    if (isSignInFailure && errorMsg) {
+      Alert.alert("Error", errorMsg);
+      dispatch(signInDataReset());
+    }
+  }, [isSignInSuccess, isSignInFailure, errorMsg, navigation, dispatch]);
 
   return (
     <View style={styles.container}>
@@ -82,16 +124,20 @@ const LoginScreen = () => {
           <Text style={styles.rememberMeText}>Remember me</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => console.log("Forgot Password?")}>
+        <TouchableOpacity onPress={() => navigation.navigate('forgotPassword')}>
           <Text style={styles.forgotText}>Forgot Password?</Text>
         </TouchableOpacity>
       </View>
 
-      <CustomButton title="Sign In" onPress={formik.handleSubmit} />
+      <CustomButton 
+        title={isSignInLoading ? "Signing In..." : "Sign In"} 
+        onPress={formik.handleSubmit}
+        disabled={isSignInLoading}
+      />
 
       <View style={styles.footer}>
         <Text style={styles.footerText}>
-          Don’t have an account?{" "}
+          Don't have an account?{" "}
           <Text onPress={() => navigation.navigate('signUp')} style={styles.signUpText}>
             Sign Up
           </Text>

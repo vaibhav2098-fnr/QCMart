@@ -1,4 +1,4 @@
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View, Alert } from "react-native";
 import CustomInput from "../../../components/custom-Input/input-field";
 import CustomButton from "../../../components/custom-Button/button";
 import { IMG } from "../../../assets/qcImages/qxImages";
@@ -8,6 +8,20 @@ import * as Yup from "yup";
 import { styles } from "./sign-up-style";
 import CustomRadioButton from "../../../components/custom-RadioButton/radio-button";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { signUpDataRequest, signUpDataReset } from "../../../redux/reducers/auth-module/sign-up-screen";
+import { RootState } from "../../../redux/reducers";
+import { useState, useEffect } from "react";
+
+// Define navigation types
+type AuthStackParamList = {
+  login: undefined;
+  otp: undefined;
+};
+
+type NavigationProp = {
+  navigate: (screen: keyof AuthStackParamList) => void;
+};
 
 // Validation schema
 const loginValidationSchema = Yup.object().shape({
@@ -21,7 +35,15 @@ const loginValidationSchema = Yup.object().shape({
 });
 
 const SignUpScreen = () => {
-    const navigation = useNavigation()
+    const navigation = useNavigation<NavigationProp>();
+    const dispatch = useDispatch();
+    const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+
+    // Get auth state from Redux
+    const { isSignUpLoading, isSignUpSuccess, isSignUpFailure, errorMsg } = useSelector(
+        (state: RootState) => state.signUpDataReducer
+    );
+
     const formik = useFormik({
         initialValues: {
             fullName: "",
@@ -32,9 +54,31 @@ const SignUpScreen = () => {
         },
         validationSchema: loginValidationSchema,
         onSubmit: (values) => {
+            if (!isTermsAccepted) {
+                Alert.alert("Error", "Please accept the Terms of Service and Privacy Policy");
+                return;
+            }
             console.log("Form Submitted:", values);
+            // Dispatch sign up action
+            dispatch(signUpDataRequest(values));
         },
     });
+
+    // Handle sign up response
+    useEffect(() => {
+        if (isSignUpSuccess) {
+            Alert.alert("Success", "Account created successfully!");
+            // Navigate to OTP screen for verification
+            navigation.navigate('otp');
+            // Reset the state
+            dispatch(signUpDataReset());
+        }
+        
+        if (isSignUpFailure && errorMsg) {
+            Alert.alert("Error", errorMsg);
+            dispatch(signUpDataReset());
+        }
+    }, [isSignUpSuccess, isSignUpFailure, errorMsg, navigation, dispatch]);
 
     const handleFocus = (field: keyof typeof formik.values) => {
         formik.setFieldTouched(field, false);
@@ -112,8 +156,13 @@ const SignUpScreen = () => {
 
             <View style={styles.optionsContainer}>
                 <View style={styles.checkboxWrapper}>
-                    <TouchableOpacity onPress={() => console.log("Agreed")} style={styles.checkbox}>
-                        <Image source={Icons["fi-rr-check"]} style={styles.checkIcon} />
+                    <TouchableOpacity 
+                        onPress={() => setIsTermsAccepted(!isTermsAccepted)} 
+                        style={styles.checkbox}
+                    >
+                        {isTermsAccepted && (
+                            <Image source={Icons["fi-rr-check"]} style={styles.checkIcon} />
+                        )}
                     </TouchableOpacity>
                     <Text style={styles.rememberMeText}>
                         By Logging In or Signing up, you agree to our{" "}
@@ -123,8 +172,12 @@ const SignUpScreen = () => {
                 </View>
             </View>
 
-            {/* <CustomButton title="Sign Up" onPress={formik.handleSubmit} containerStyle={styles.containerStyle}/> */}
-            <CustomButton title="Sign Up" onPress={()=>navigation.navigate('otp')} containerStyle={styles.containerStyle}/>
+            <CustomButton 
+                title={isSignUpLoading ? "Creating Account..." : "Sign Up"} 
+                onPress={formik.handleSubmit}
+                disabled={isSignUpLoading}
+                containerStyle={styles.containerStyle}
+            />
 
             <View style={styles.footer}>
                 <Text style={styles.footerText}>

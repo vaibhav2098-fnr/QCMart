@@ -6,6 +6,7 @@ import popularProductDataReducer from './most-popular-product'
 import signInDataReducer from './auth-module/sign-in-screen'
 import signUpDataReducer from './auth-module/sign-up-screen'
 import otpDataReducer from './auth-module/otp-screen'
+import forgotPasswordDataReducer from './auth-module/forgot-password'
 import categoriesProductListDataDataReducer from './categories-products-list'
 import getProductsListDataReducer from './get-products-list'
 
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   signInDataReducer: signInDataReducer,
   signUpDataReducer: signUpDataReducer,
   otpDataReducer: otpDataReducer,
+  forgotPasswordDataReducer: forgotPasswordDataReducer,
   productCategoriesDataReducer: productCategoriesDataReducer,
   cartReducer: cartReducer,
   commonReducer: commonReducer,
