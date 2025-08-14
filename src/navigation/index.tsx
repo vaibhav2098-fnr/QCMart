@@ -3,11 +3,12 @@ import * as React from 'react';
 import { AuthNavigator, HomeNavigator } from './StackNavigator';
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'react-native';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/reducers';
 
 const MainStack = createNativeStackNavigator();
 const Navigation: React.FC = () => {
-  // const { token } = useSelector((state: RootState) => state?.loginDataReducer);
-  const token = true
+  const { token } = useSelector((state: RootState) => state?.signInDataReducer);
 
   return (
     <NavigationContainer>

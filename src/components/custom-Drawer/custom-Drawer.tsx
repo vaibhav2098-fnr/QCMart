@@ -12,6 +12,8 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { Icons } from '../../assets/qcIcons/qcIcons';
 import { moderateScale } from '../../utils/deviceConfig';
+import { useDispatch } from 'react-redux';
+import { signInDataReset } from '../../redux/reducers/auth-module/sign-in-screen';
 
 const { width: screenWidth } = Dimensions.get('window');
 const DRAWER_WIDTH = screenWidth * 0.8;
@@ -29,6 +31,7 @@ interface MenuItem {
 
 const CustomDrawer: React.FC<DrawerProps> = ({ isVisible, onClose }) => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
   const overlayAnim = useRef(new Animated.Value(0)).current;
 
@@ -172,7 +175,7 @@ const CustomDrawer: React.FC<DrawerProps> = ({ isVisible, onClose }) => {
 
         {/* Footer */}
         <View style={styles.drawerFooter}>
-          <TouchableOpacity style={styles.signInButton}>
+          <TouchableOpacity style={styles.signInButton} onPress={()=>dispatch(signInDataReset())}>
             <Image source={Icons['fi-rr-sign-out']} style={{ height: moderateScale(24), width: moderateScale(24) }} />
             <Text style={styles.signInText}>Logout</Text>
           </TouchableOpacity>

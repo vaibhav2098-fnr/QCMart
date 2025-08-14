@@ -9,6 +9,7 @@ const initialState = {
   isSignInFailure: false,
   signInData: {},
   errorMsg: "",
+  token: "",
 };
 // Create the slice
 export const signInDataSlice = createSlice({
@@ -29,6 +30,7 @@ export const signInDataSlice = createSlice({
       state.isSignInFailure = false;
       state.errorMsg = null;
       state.signInData = action?.payload?.data;
+      state.token = action?.payload?.token;
     },
     // signInData Failure
     signInDataFailure: (state, action) => {
@@ -43,6 +45,8 @@ export const signInDataSlice = createSlice({
       state.isSignInFailure = false;
       state.signInData = {};
       state.errorMsg = '';
+      state.token = '';
+
     },
   },
 });

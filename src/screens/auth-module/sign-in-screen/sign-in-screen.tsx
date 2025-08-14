@@ -9,7 +9,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { signInDataRequest, signInDataReset } from "../../../redux/reducers/auth-module/sign-in-screen";
+import { signInDataRequest } from "../../../redux/reducers/auth-module/sign-in-screen";
 import { RootState } from "../../../redux/reducers";
 
 // Define navigation types
@@ -50,8 +50,8 @@ const LoginScreen = () => {
 
   const formik = useFormik({
     initialValues: {
-      email: "",
-      password: "",
+      email: "66kochle@gmail.com",
+      password: "admin@123",
     },
     validationSchema: loginValidationSchema,
     onSubmit: (values) => {
@@ -68,12 +68,12 @@ const LoginScreen = () => {
       // Navigate to home or next screen
       navigation.navigate('Home');
       // Reset the state
-      dispatch(signInDataReset());
+      // dispatch(signInDataReset());
     }
     
     if (isSignInFailure && errorMsg) {
       Alert.alert("Error", errorMsg);
-      dispatch(signInDataReset());
+      // dispatch(signInDataReset());
     }
   }, [isSignInSuccess, isSignInFailure, errorMsg, navigation, dispatch]);
 

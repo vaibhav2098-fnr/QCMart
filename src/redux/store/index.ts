@@ -10,7 +10,7 @@ const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
   // You can whitelist or blacklist reducers
-  whitelist: [''],
+  whitelist: ['signInDataReducer'],
   // blacklist: ['someTransientReducer']
 };
 
