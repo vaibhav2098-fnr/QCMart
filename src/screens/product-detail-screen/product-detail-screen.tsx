@@ -73,7 +73,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route }) => {
     };
     
     dispatch(addToCart(cartItem));
-    (navigation as any).navigate('MainTabs', { screen: 'Cart' });
+    (navigation as any).navigate('Cart');
   };
   const totalPrice = product.price * quantity;
 

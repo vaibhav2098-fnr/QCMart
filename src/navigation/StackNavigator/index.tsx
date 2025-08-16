@@ -33,6 +33,8 @@ export const HomeNavigator: React.FC = () => {
         } as NativeStackNavigationOptions
       }>
       <Stack.Screen name="MainTabs" component={BottomTabNavigator} />
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Cart" component={CartScreen} />
       <Stack.Screen name="category" component={CategoryScreen} />
       <Stack.Screen name="mostpopular" component={MostPopularScreen} />
       <Stack.Screen name="productDetail" component={ProductDetailScreen} />

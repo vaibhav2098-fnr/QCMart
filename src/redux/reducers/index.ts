@@ -9,6 +9,7 @@ import otpDataReducer from './auth-module/otp-screen'
 import forgotPasswordDataReducer from './auth-module/forgot-password'
 import categoriesProductListDataDataReducer from './categories-products-list'
 import getProductsListDataReducer from './get-products-list'
+import profileDataReducer from './profile'
 
 const rootReducer = combineReducers({
   signInDataReducer: signInDataReducer,
@@ -20,7 +21,8 @@ const rootReducer = combineReducers({
   commonReducer: commonReducer,
   popularProductDataReducer: popularProductDataReducer,
   categoriesProductListDataDataReducer:categoriesProductListDataDataReducer,
-  getProductsListDataReducer:getProductsListDataReducer
+  getProductsListDataReducer:getProductsListDataReducer,
+  profileDataReducer:profileDataReducer
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

@@ -57,6 +57,11 @@ export const styles = StyleSheet.create({
     marginBottom: moderateScale(20),
     backgroundColor: '#041C45',
   },
+  errorText: {
+    fontSize: moderateScale(12),
+    color: '#ff4d4f',
+    textAlign: 'left',
+},
 });
 
 

@@ -1,26 +1,75 @@
-import React, { useState } from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, ScrollView, Text, TouchableOpacity, View, Platform, ViewStyle, TextStyle, PermissionsAndroid } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { useNavigation } from '@react-navigation/native';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+
 import CustomHeader from '../../components/custom-header/custom-header';
 import CustomInput from '../../components/custom-Input/input-field';
 import CustomButton from '../../components/custom-Button/button';
 import { Icons } from '../../assets/qcIcons/qcIcons';
 import { styles } from './profile-styles';
 import { moderateScale } from '../../utils/deviceConfig';
-import { useNavigation } from '@react-navigation/native';
+import DropdownMenu from '../../components/custom-scrollable-dropdown/custom-scrollable-dropdown.component';
+import { useDispatch, useSelector } from 'react-redux';
+import { profileDataRequest } from '../../redux/reducers/profile';
+import { RootState } from '../../redux/reducers';
+
+const ProfileSchema = Yup.object().shape({
+  name: Yup.string().required('Name is required'),
+  email: Yup.string().email('Invalid Email').required('Email is required'),
+  phone: Yup.string().required('Phone number is required'),
+  dob: Yup.string().required('DOB is required'),
+  gender: Yup.string().required('Gender is required'),
+  location: Yup.string().required('Location is required'),
+});
+
+const options = [
+  "Male",
+  "Female",
+  "Other",
+];
 
 const ProfileScreen: React.FC = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch()
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<any>('https://images.unsplash.com/photo-1494790108377-be9c29b29330?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlciUyMHByb2ZpbGV8ZW58MHx8MHx8fDA%3D'); // 👈 added
+  const { token } = useSelector((state: RootState) => state?.signInDataReducer);
+  const { profileData } = useSelector((state: RootState) => state.profileDataReducer);
+  const { profile } = profileData
 
-  const [name, setName] = useState('Deepak Rathore');
-  const [email, setEmail] = useState('Deepakrathore31@gmail.com');
-  const [phone, setPhone] = useState('+91-9893981505');
-  const [dob, setDob] = useState('31/08/1995');
-  const [gender, setGender] = useState('Male');
-  const [location, setLocation] = useState('Basant Vihar Colony, Near Satya Sai Sq,...');
+  useEffect(() => {
+    dispatch(profileDataRequest({ token: token }))
+  }, [dispatch, token])
 
-  const handleUpdate = () => {
-    // Integrate with API when available
-    console.log('Update profile', { name, email, phone, dob, gender, location });
+  const formik = useFormik({
+    initialValues: {
+      name: profile?.name || '',
+      email: profile?.email || '',
+      phone: profile?.phone || '',
+      dob: profile?.dob || '',
+      gender: options[0],  //need to add
+      location: '',  //need to add
+    },
+    validationSchema: ProfileSchema,
+    onSubmit: (values) => {
+      dispatch(profileDataRequest({
+        token: token,
+        name: values.name,
+        dob: values.dob,
+        phone: values.phone
+      }));
+    },
+  });
+
+  const onChangeDate = (_: any, selectedDate?: Date) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      const formattedDate = selectedDate.toLocaleDateString('en-GB'); // DD/MM/YYYY
+      formik.setFieldValue('dob', formattedDate);
+    }
   };
 
   return (
@@ -33,87 +82,163 @@ const ProfileScreen: React.FC = () => {
       <View style={styles.headerSpacer} />
 
       <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Avatar */}
         <View style={styles.avatarWrapper}>
           <View style={styles.avatarCircle}>
-            <Image source={Icons['fi-rr-man-head']} style={styles.avatarImage} />
+            <Image
+              source={
+                selectedImage
+                  ? { uri: selectedImage.uri }
+                  : Icons['fi-rr-man-head']
+              }
+              style={styles.avatarImage}
+            />
           </View>
-          <TouchableOpacity style={styles.editBadge}>
-            <Image source={Icons['fi-rr-edit']} style={{ height: moderateScale(16), width: moderateScale(16), tintColor: '#fff' }} />
+          <TouchableOpacity style={styles.editBadge} onPress={()=>console.log('pickImage')}>
+            <Image
+              source={Icons['fi-rr-edit']}
+              style={{
+                height: moderateScale(16),
+                width: moderateScale(16),
+                tintColor: '#fff',
+              }}
+            />
           </TouchableOpacity>
         </View>
 
+        {/* Name */}
         <Text style={styles.label}>Name</Text>
         <CustomInput
-          leftIcon={<Image source={Icons['fi-rr-user']} style={{ height: moderateScale(20), width: moderateScale(20) }} />}
-          value={name}
-          onChangeText={setName}
-          secureTextEntry={false}
+          leftIcon={<Image source={Icons['fi-rr-user']} style={{ height: 20, width: 20 }} />}
+          value={formik.values.name}
+          onChangeText={formik.handleChange('name')}
+          onBlur={formik.handleBlur('name')}
           customPlaceholder="Your name"
-          showLockIcon={true}
-          enableToggleVisibility={false}
+          secureTextEntry={false}
+          rightIcon={<></>}
         />
+        {formik.touched.name && formik.errors.name && (
+          <Text style={styles.errorText}>{formik.errors.name}</Text>
+        )}
 
+        {/* Email */}
         <Text style={styles.label}>Email</Text>
         <CustomInput
-          leftIcon={<Image source={Icons['fi-rr-envelope']} style={{ height: moderateScale(20), width: moderateScale(20) }} />}
-          value={email}
-          onChangeText={setEmail}
+          leftIcon={<Image source={Icons['fi-rr-envelope']} style={{ height: 20, width: 20 }} />}
+          value={formik.values.email}
+          onChangeText={formik.handleChange('email')}
+          onBlur={formik.handleBlur('email')}
+          customPlaceholder="Your email"
           secureTextEntry={false}
           keyboardType="email-address"
-          customPlaceholder="Your email"
-          showLockIcon={true}
-          enableToggleVisibility={false}
+          rightIcon={<></>}
+          disabled
         />
+        {formik.touched.email && formik.errors.email && (
+          <Text style={styles.errorText}>{formik.errors.email}</Text>
+        )}
 
+        {/* Phone */}
         <Text style={styles.label}>Contact Number</Text>
         <CustomInput
-          leftIcon={<Image source={Icons['fi-rr-phone-call']} style={{ height: moderateScale(20), width: moderateScale(20) }} />}
-          value={phone}
-          onChangeText={setPhone}
+          leftIcon={<Image source={Icons['fi-rr-phone-call']} style={{ height: 20, width: 20 }} />}
+          value={formik.values.phone}
+          onChangeText={formik.handleChange('phone')}
+          onBlur={formik.handleBlur('phone')}
+          customPlaceholder="Phone number"
           secureTextEntry={false}
           keyboardType="phone-pad"
-          customPlaceholder="Phone number"
-          showLockIcon={true}
-          enableToggleVisibility={false}
+          rightIcon={<></>}
         />
+        {formik.touched.phone && formik.errors.phone && (
+          <Text style={styles.errorText}>{formik.errors.phone}</Text>
+        )}
 
+        {/* DOB with calendar */}
         <Text style={styles.label}>DOB</Text>
-        <CustomInput
-          leftIcon={<Image source={Icons['fi-rr-calendar']} style={{ height: moderateScale(20), width: moderateScale(20) }} />}
-          rightIcon={<Image source={Icons['fi-rr-calendar']} style={{ height: moderateScale(20), width: moderateScale(20) }} />}
-          value={dob}
-          onChangeText={setDob}
-          secureTextEntry={false}
-          customPlaceholder="DD/MM/YYYY"
-          showLockIcon={true}
-          enableToggleVisibility={false}
-        />
+        <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+          <CustomInput
+            leftIcon={<Image source={Icons['fi-rr-calendar']} style={{ height: 20, width: 20 }} />}
+            value={formik.values.dob}
+            onChangeText={() => { }} // disable manual input
+            editable={false}
+            customPlaceholder="DD/MM/YYYY"
+            secureTextEntry={false}
+            rightIcon={<></>}
+          />
+        </TouchableOpacity>
+        {formik.touched.dob && formik.errors.dob && (
+          <Text style={styles.errorText}>{formik.errors.dob}</Text>
+        )}
 
+        {showDatePicker && (
+          <DateTimePicker
+            value={formik.values.dob ? new Date(formik.values.dob) : new Date()}
+            mode="date"
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            onChange={onChangeDate}
+            maximumDate={new Date()} // No future dates
+          />
+        )}
+
+        {/* Gender */}
         <Text style={styles.label}>Gender</Text>
-        <CustomInput
-          leftIcon={<Image source={Icons['fi-rr-venus-mars']} style={{ height: moderateScale(20), width: moderateScale(20) }} />}
-          rightIcon={<Image source={Icons['fi-rr-caret-down']} style={{ height: moderateScale(20), width: moderateScale(20) }} />}
-          value={gender}
-          onChangeText={setGender}
-          secureTextEntry={false}
-          customPlaceholder="Gender"
-          showLockIcon={true}
-          enableToggleVisibility={false}
+        <DropdownMenu
+          options={options}
+          onSelect={(selectedItem: string, index: number) => {
+            formik.setFieldValue('gender', selectedItem)
+          }}
+          placeHolder='select options'
+          placeHolderStyle={{ color: 'red' }}
+          renderButton={(buttonRef, toggleMenu) => {
+            return (
+              <TouchableOpacity style={[$button]} ref={buttonRef} onPress={toggleMenu}>
+                <Text>{formik.values.gender}</Text>
+              </TouchableOpacity>
+            )
+          }}
+          renderItem={(setIsMenuOpen: () => any) => {
+            return options.map((option, index) => {
+              return (<TouchableOpacity
+                key={index}
+                onPress={() => {
+                  setIsMenuOpen()
+                  formik.setFieldValue('gender', option)
+                }}
+                style={[$menuItem(options?.length === index + 1)]}
+              >
+                <Text style={[$textStyle]}>{option} </Text>
+              </TouchableOpacity>)
+            })
+          }}
+          contentStyle={$contentStyle}
         />
 
+        {formik.touched.gender && formik.errors.gender && (
+          <Text style={styles.errorText}>{formik.errors.gender}</Text>
+        )}
+
+        {/* Location */}
         <Text style={styles.label}>Location</Text>
         <CustomInput
-          leftIcon={<Image source={Icons['fi-rr-map-marker']} style={{ height: moderateScale(20), width: moderateScale(20) }} />}
-          rightIcon={<Image source={Icons['fi-rr-settings']} style={{ height: moderateScale(20), width: moderateScale(20) }} />}
-          value={location}
-          onChangeText={setLocation}
-          secureTextEntry={false}
+          leftIcon={<Image source={Icons['fi-rr-map-marker']} style={{ height: 20, width: 20 }} />}
+          value={formik.values.location}
+          onChangeText={formik.handleChange('location')}
+          onBlur={formik.handleBlur('location')}
           customPlaceholder="Your address"
-          showLockIcon={true}
-          enableToggleVisibility={false}
+          secureTextEntry={false}
+          rightIcon={<></>}
         />
+        {formik.touched.location && formik.errors.location && (
+          <Text style={styles.errorText}>{formik.errors.location}</Text>
+        )}
 
-        <CustomButton title="Update" onPress={handleUpdate} containerStyle={styles.updateButton} />
+        {/* Submit button */}
+        <CustomButton
+          title="Update"
+          onPress={formik.handleSubmit as any}
+          containerStyle={styles.updateButton}
+        />
       </ScrollView>
     </View>
   );
@@ -121,4 +246,44 @@ const ProfileScreen: React.FC = () => {
 
 export default ProfileScreen;
 
+const $contentStyle: ViewStyle = {
+  marginTop: moderateScale(-36),
+  width: '90%',
+  height: moderateScale(230),
+  backgroundColor: '#fff',
+  borderRadius: moderateScale(12),
+  padding: moderateScale(10),
 
+  // iOS shadow
+  shadowColor: '#000',
+  shadowOpacity: 0.15,
+  shadowRadius: 8,
+  shadowOffset: { width: 0, height: 4 },
+
+  // Android shadow
+  elevation: 6,
+}
+
+const $menuItem = (isLast: boolean): ViewStyle => ({
+  padding: 12,
+  borderBottomWidth: isLast ? 0 : 0.5,
+  borderColor: 'gray',
+})
+
+const $textStyle: TextStyle = {
+  fontSize: moderateScale(16),
+  fontWeight: '400',
+  color: '#000'
+}
+
+const $button: TextStyle = {
+  flexDirection: 'row',
+  alignItems: 'center',
+  borderWidth: 1,
+  borderColor: '#ccc',
+  paddingHorizontal: moderateScale(12),
+  height: moderateScale(50),
+  width: '100%',
+  backgroundColor: '#fff',
+  borderRadius: moderateScale(12),
+}

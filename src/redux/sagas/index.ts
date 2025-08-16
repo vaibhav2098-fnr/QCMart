@@ -5,6 +5,7 @@ import { watchGetProductsListData } from './get-products-list';
 import { watchSignInData } from './auth-module/sign-in-saga';
 import { watchSignUpData } from './auth-module/sign-up-saga';
 import { watchForgotPasswordData } from './auth-module/forgot-password-saga';
+import { watchProfileData } from './profile';
 
 // single entry point to start all Sagas at once
 export default function* rootSaga() {
@@ -14,6 +15,7 @@ export default function* rootSaga() {
     watchGetProductsListData(),
     watchSignInData(),
     watchSignUpData(),
-    watchForgotPasswordData()
+    watchForgotPasswordData(),
+    watchProfileData()
   ]);
 }
