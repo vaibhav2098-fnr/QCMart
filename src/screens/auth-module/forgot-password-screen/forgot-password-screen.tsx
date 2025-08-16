@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Image, Text, TouchableOpacity, View, Alert } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import CustomInput from "../../../components/custom-Input/input-field";
 import CustomButton from "../../../components/custom-Button/button";
 import { IMG } from "../../../assets/qcImages/qxImages";
@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { forgotPasswordDataRequest, forgotPasswordDataReset } from "../../../redux/reducers/auth-module/forgot-password";
 import { RootState } from "../../../redux/reducers";
 import { styles } from "./forgot-password-styles";
+import CustomPopup from '../../../components/custom-popup';
 
 // Define navigation types
 type AuthStackParamList = {
@@ -37,9 +38,10 @@ const forgotPasswordValidationSchema = Yup.object().shape({
 const ForgotPasswordScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const dispatch = useDispatch();
+  const [showPopup, setShowPopup] = useState('')
 
   // Get auth state from Redux
-  const { isForgotPasswordLoading, isForgotPasswordSuccess, isForgotPasswordFailure, errorMsg } = useSelector(
+  const { forgotPasswordData, isForgotPasswordLoading, isForgotPasswordSuccess, isForgotPasswordFailure, errorMsg } = useSelector(
     (state: RootState) => state.forgotPasswordDataReducer
   );
 
@@ -49,7 +51,6 @@ const ForgotPasswordScreen = () => {
     },
     validationSchema: forgotPasswordValidationSchema,
     onSubmit: (values) => {
-      console.log("Forgot Password form submitted:", values);
       // Dispatch forgot password action
       dispatch(forgotPasswordDataRequest(values));
     },
@@ -58,24 +59,17 @@ const ForgotPasswordScreen = () => {
   // Handle forgot password response
   useEffect(() => {
     if (isForgotPasswordSuccess) {
-      Alert.alert(
-        "Success", 
-        "Password reset link has been sent to your email address. Please check your inbox and follow the instructions to reset your password.",
-        [
-          {
-            text: "OK",
-            onPress: () => {
-              navigation.navigate('login');
-              dispatch(forgotPasswordDataReset());
-            }
-          }
-        ]
-      );
+      setShowPopup(forgotPasswordData?.message || '')
+      setTimeout(() => {
+        dispatch(forgotPasswordDataReset());
+      }, 2000)
     }
-    
+
     if (isForgotPasswordFailure && errorMsg) {
-      Alert.alert("Error", errorMsg);
-      dispatch(forgotPasswordDataReset());
+      setShowPopup(errorMsg)
+      setTimeout(() => {
+        dispatch(forgotPasswordDataReset());
+      }, 2000)
     }
   }, [isForgotPasswordSuccess, isForgotPasswordFailure, errorMsg, navigation, dispatch]);
 
@@ -90,7 +84,7 @@ const ForgotPasswordScreen = () => {
       </View>
 
       <Image source={IMG["QC-mart-logo"]} style={styles.logo} />
-      
+
       <View style={styles.contentContainer}>
         <Text style={styles.heading}>Reset your password</Text>
         <Text style={styles.subHeading}>
@@ -117,8 +111,8 @@ const ForgotPasswordScreen = () => {
           isShowError={formik.touched.email && formik.errors.email}
         />
 
-        <CustomButton 
-          title={isForgotPasswordLoading ? "Sending..." : "Send Reset Link"} 
+        <CustomButton
+          title={isForgotPasswordLoading ? "Sending..." : "Send Reset Link"}
           onPress={formik.handleSubmit}
           disabled={isForgotPasswordLoading}
         />
@@ -132,6 +126,12 @@ const ForgotPasswordScreen = () => {
           </Text>
         </View>
       </View>
+      {isForgotPasswordFailure && errorMsg ?
+        <CustomPopup position='bottom' type='error' message={showPopup} visible={isForgotPasswordFailure} />
+        : null}
+      {isForgotPasswordSuccess ?
+        <CustomPopup position='bottom' type='success' message={showPopup} visible={isForgotPasswordSuccess} />
+        : null}
     </View>
   );
 };

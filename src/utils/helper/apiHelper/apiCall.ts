@@ -43,7 +43,6 @@ export const apiCall = async ({
 
     return response.data;
   } catch (error: any) {
-    console.error('API Call Error:', error?.response?.data || error.message);
     throw error?.response?.data || { message: 'Something went wrong!' };
   }
 };

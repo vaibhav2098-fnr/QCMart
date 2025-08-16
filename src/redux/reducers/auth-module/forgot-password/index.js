@@ -29,7 +29,7 @@ export const forgotPasswordDataSlice = createSlice({
       state.isForgotPasswordSuccess = true;
       state.isForgotPasswordFailure = false;
       state.errorMsg = null;
-      state.forgotPasswordData = action?.payload?.data;
+      state.forgotPasswordData = action?.payload;
     },
     // forgotPasswordData Failure
     forgotPasswordDataFailure: (state, action) => {

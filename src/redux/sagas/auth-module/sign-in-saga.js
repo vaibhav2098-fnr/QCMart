@@ -1,5 +1,5 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
-import { signInDataSuccess, signInDataFailure } from '../../reducers/auth-module/sign-in-screen';
+import { signInDataSuccess, signInDataFailure, setToken } from '../../reducers/auth-module/sign-in-screen';
 import { apiCall } from '../../../utils/helper/apiHelper/apiCall';
 import { LOGIN_API } from '../../../utils/constants';
 
@@ -13,6 +13,8 @@ function* signInDataSaga(action) {
 
     if (response.success) {
       yield put(signInDataSuccess(response));
+      yield put(setToken(response));
+      
     } else {
       yield put(signInDataFailure({ message: response.message || 'Login failed' }));
     }

@@ -46,13 +46,16 @@ export const signInDataSlice = createSlice({
       state.signInData = {};
       state.errorMsg = '';
       state.token = '';
+    },
 
+    setToken: (state, action) => {
+      state.token = action?.payload?.token;
     },
   },
 });
 
 // Export actions
-export const { signInDataRequest, signInDataSuccess, signInDataFailure, signInDataReset } = signInDataSlice.actions;
+export const {setToken, signInDataRequest, signInDataSuccess, signInDataFailure, signInDataReset } = signInDataSlice.actions;
 
 // Export reducer
 export default signInDataSlice.reducer;

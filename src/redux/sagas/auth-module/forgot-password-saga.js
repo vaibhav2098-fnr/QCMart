@@ -5,18 +5,10 @@ import { FORGOT_PASSWORD_API } from '../../../utils/constants';
 
 function* forgotPasswordDataSaga(action) {
   try {
-    // Create form data as per the curl request
-    const formData = new FormData();
-    formData.append('email', action.payload.email);
-
     const response = yield call(apiCall, {
       method: 'POST',
       endpoint: FORGOT_PASSWORD_API,
-      data: formData,
-      isMultipart: true,
-      headers: {
-        'Accept': 'application/json',
-      },
+      data: action?.payload,
     });
 
     if (response.success) {

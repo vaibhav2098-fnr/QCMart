@@ -22,7 +22,7 @@ export function* handleProductCategoriesData(action) {
     const _message = message ? message : genericMsg;
 
     if (!isEmptyObj(response)) {
-      yield put(productCategoriesDataSuccess({ data: response?.data }));
+      yield put(productCategoriesDataSuccess(response));
     } else {
       yield put(productCategoriesDataFailure({ message: _message }));
     }

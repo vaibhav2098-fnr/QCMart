@@ -12,45 +12,47 @@ import { useDispatch, useSelector } from "react-redux";
 import { signUpDataRequest, signUpDataReset } from "../../../redux/reducers/auth-module/sign-up-screen";
 import { RootState } from "../../../redux/reducers";
 import { useState, useEffect } from "react";
+import { getFieldValidationError } from "../../../utils/helper";
 
 // Define navigation types
 type AuthStackParamList = {
-  login: undefined;
-  otp: undefined;
+    login: undefined;
+    otp: undefined;
 };
 
 type NavigationProp = {
-  navigate: (screen: keyof AuthStackParamList) => void;
+    navigate: (screen: keyof AuthStackParamList) => void;
 };
 
 // Validation schema
 const loginValidationSchema = Yup.object().shape({
-    fullName: Yup.string().required("Full name is required"),
+    name: Yup.string().required("Full name is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
-    mobileNumber: Yup.string()
+    phone: Yup.string()
         .matches(/^[0-9]{10}$/, "Mobile number must be 10 digits")
         .required("Mobile number is required"),
     password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
-    userType: Yup.string().required("User type is required"),
+    is_vendor: Yup.string().required("User type is required"),
 });
 
 const SignUpScreen = () => {
     const navigation = useNavigation<NavigationProp>();
     const dispatch = useDispatch();
     const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+    const [generalError, setGeneralError] = useState('');
 
     // Get auth state from Redux
-    const { isSignUpLoading, isSignUpSuccess, isSignUpFailure, errorMsg } = useSelector(
+    const { isSignUpLoading, isSignUpSuccess, isSignUpFailure, errorMsg, token, validationErrors } = useSelector(
         (state: RootState) => state.signUpDataReducer
     );
 
     const formik = useFormik({
         initialValues: {
-            fullName: "",
+            name: "",
             email: "",
-            mobileNumber: "",
+            phone: "",
             password: "",
-            userType: "1", // Default: Customer
+            is_vendor: "0", // Default: Vendor
         },
         validationSchema: loginValidationSchema,
         onSubmit: (values) => {
@@ -67,18 +69,35 @@ const SignUpScreen = () => {
     // Handle sign up response
     useEffect(() => {
         if (isSignUpSuccess) {
-            Alert.alert("Success", "Account created successfully!");
-            // Navigate to OTP screen for verification
-            navigation.navigate('otp');
+            if (token) {
+                // If we have a token, navigate to home/dashboard
+                Alert.alert("Success", "Account created successfully! Welcome to QCMart.");
+                // The navigation will be handled automatically by the main navigation
+                // since the token is now in the store
+            } else {
+                // If no token, navigate to OTP screen for verification
+                Alert.alert("Success", "Account created successfully! Please verify your account.");
+                navigation.navigate('otp');
+            }
             // Reset the state
             dispatch(signUpDataReset());
         }
-        
+    }, [isSignUpSuccess, token, navigation, dispatch]);
+
+    useEffect(() => {
         if (isSignUpFailure && errorMsg) {
-            Alert.alert("Error", errorMsg);
+            if (validationErrors && Object.keys(validationErrors).length > 0) {
+                // Map backend validation errors into Formik
+                Object.entries(validationErrors).forEach(([field, message]) => {
+                    formik.setFieldError(field, String(message));
+                });
+            } else if (errorMsg) {
+                // Set a general error to display at the top
+                setGeneralError(errorMsg);
+            }
             dispatch(signUpDataReset());
         }
-    }, [isSignUpSuccess, isSignUpFailure, errorMsg, navigation, dispatch]);
+    }, [isSignUpFailure, errorMsg, dispatch, validationErrors]);
 
     const handleFocus = (field: keyof typeof formik.values) => {
         formik.setFieldTouched(field, false);
@@ -91,15 +110,15 @@ const SignUpScreen = () => {
 
             <CustomInput
                 leftIcon={<Image source={Icons["fi-rr-user"]} style={styles.iconImage} />}
-                value={formik.values.fullName}
+                value={formik.values.name}
                 rightIcon
                 secureTextEntry={false}
-                onChangeText={formik.handleChange("fullName")}
-                onBlur={formik.handleBlur("fullName")}
-                onFocus={() => handleFocus("fullName")}
+                onChangeText={formik.handleChange("name")}
+                onBlur={formik.handleBlur("name")}
+                onFocus={() => handleFocus("name")}
                 customPlaceholder="Full Name"
-                errorMessage={formik.errors.fullName}
-                isShowError={formik.touched.fullName && formik.errors.fullName}
+                errorMessage={formik.errors.name || getFieldValidationError(validationErrors, 'name')}
+                isShowError={(formik.touched.name && formik.errors.name) || getFieldValidationError(validationErrors, 'name')}
             />
 
             <CustomInput
@@ -111,22 +130,22 @@ const SignUpScreen = () => {
                 onBlur={formik.handleBlur("email")}
                 onFocus={() => handleFocus("email")}
                 customPlaceholder="Email"
-                errorMessage={formik.errors.email}
-                isShowError={formik.touched.email && formik.errors.email}
+                errorMessage={formik.errors.email || getFieldValidationError(validationErrors, 'email')}
+                isShowError={(formik.touched.email && formik.errors.email) || getFieldValidationError(validationErrors, 'email')}
             />
 
             <CustomInput
                 leftIcon={<Image source={Icons["fi-rr-phone-call"]} style={styles.iconImage} />}
-                value={formik.values.mobileNumber}
+                value={formik.values.phone}
                 rightIcon
                 secureTextEntry={false}
-                onChangeText={formik.handleChange("mobileNumber")}
-                onBlur={formik.handleBlur("mobileNumber")}
-                onFocus={() => handleFocus("mobileNumber")}
+                onChangeText={formik.handleChange("phone")}
+                onBlur={formik.handleBlur("phone")}
+                onFocus={() => handleFocus("phone")}
                 customPlaceholder="Mobile Number"
                 keyboardType="phone-pad"
-                errorMessage={formik.errors.mobileNumber}
-                isShowError={formik.touched.mobileNumber && formik.errors.mobileNumber}
+                errorMessage={formik.errors.phone || getFieldValidationError(validationErrors, 'phone')}
+                isShowError={(formik.touched.phone && formik.errors.phone) || getFieldValidationError(validationErrors, 'phone')}
             />
 
             <CustomInput
@@ -142,22 +161,22 @@ const SignUpScreen = () => {
             <View style={styles.optionsContainer}>
                 <CustomRadioButton
                     options={[
-                        { label: "I am a customer", value: "1" },
-                        { label: "I am a vendor", value: "2" },
+                        { label: "I am a vendor", value: "0" },
+                        // { label: "I am a customer", value: "1" }, //future need
                     ]}
-                    selectedValue={formik.values.userType}
-                    onChange={(val) => formik.setFieldValue("userType", val)}
+                    selectedValue={formik.values.is_vendor}
+                    onChange={(val) => formik.setFieldValue("is_vendor", val)}
                     direction="horizontal"
                 />
-                {formik.touched.userType && formik.errors.userType ? (
-                    <Text style={styles.errorText}>{formik.errors.userType}</Text>
+                {formik.touched.is_vendor && formik.errors.is_vendor ? (
+                    <Text style={styles.errorText}>{formik.errors.is_vendor}</Text>
                 ) : null}
             </View>
 
             <View style={styles.optionsContainer}>
                 <View style={styles.checkboxWrapper}>
-                    <TouchableOpacity 
-                        onPress={() => setIsTermsAccepted(!isTermsAccepted)} 
+                    <TouchableOpacity
+                        onPress={() => setIsTermsAccepted(!isTermsAccepted)}
                         style={styles.checkbox}
                     >
                         {isTermsAccepted && (
@@ -172,12 +191,18 @@ const SignUpScreen = () => {
                 </View>
             </View>
 
-            <CustomButton 
-                title={isSignUpLoading ? "Creating Account..." : "Sign Up"} 
+            <CustomButton
+                title={isSignUpLoading ? "Creating Account..." : "Sign Up"}
                 onPress={formik.handleSubmit}
                 disabled={isSignUpLoading}
                 containerStyle={styles.containerStyle}
             />
+
+            {generalError ? (
+                <View style={styles.errorBanner}>
+                    <Text style={styles.errorBannerText}>{generalError}</Text>
+                </View>
+            ) : null}
 
             <View style={styles.footer}>
                 <Text style={styles.footerText}>

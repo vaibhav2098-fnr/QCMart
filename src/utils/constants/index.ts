@@ -8,4 +8,3 @@ export const GET_PRODUCTS_LIST = '/api/v1/ecommerce/products'
 export const LOGIN_API = '/apilogin'
 export const SIGNUP_API = '/api/customer/register'
 export const FORGOT_PASSWORD_API = '/resetpassword'
-

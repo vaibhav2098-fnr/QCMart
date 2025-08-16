@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
-import { FlatList, Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState, useMemo } from 'react';
+import { FlatList, Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import HomeHeader from './home-header/home-header';
 import { statusBarHeight, transformIconName, performSearch } from '../../utils/helper';
 import { moderateScale } from '../../utils/deviceConfig';
@@ -117,84 +117,84 @@ const HomeScreen = () => {
         />
       ) : (
         <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
-        <CustomCarousel data={DATA} />
+          <CustomCarousel data={DATA} />
 
 
-        <HomeSeeAll title='Category' onPress={() => (navigation as any).navigate('category')} />
-        <FlatList
-          scrollEnabled={false}
-          data={productCategoriesData?.slice(0, 8)}
-          keyExtractor={(item) => item?.id.toString() + item?.name}
-          numColumns={4}
-          contentContainerStyle={{
-            paddingHorizontal: 12,
-            paddingTop: 8,
-          }}
-          columnWrapperStyle={{
-            justifyContent: 'space-between',
-          }}
-          renderItem={({ item }) => (
-            <CategoryItem
-              icon={Icons[transformIconName(item?.icon)] || Icons['fi-rr-cube']}
-              title={item?.name}
-              onPress={() => handleProductListDataRequest(item?.id, item?.name)}
-            />
-          )}
-        />
+          <HomeSeeAll title='Category' onPress={() => (navigation as any).navigate('category')} />
+          <FlatList
+            scrollEnabled={false}
+            data={productCategoriesData?.slice(0, 8)}
+            keyExtractor={(item) => item?.id.toString() + item?.name}
+            numColumns={4}
+            contentContainerStyle={{
+              paddingHorizontal: 12,
+              paddingTop: 8,
+            }}
+            columnWrapperStyle={{
+              justifyContent: 'space-between',
+            }}
+            renderItem={({ item }) => (
+              <CategoryItem
+                icon={Icons[transformIconName(item?.icon)] || Icons['fi-rr-cube']}
+                title={item?.name}
+                onPress={() => handleProductListDataRequest(item?.id, item?.name)}
+              />
+            )}
+          />
 
 
-        <HomeSeeAll title='Most Popular' onPress={() => (navigation as any).navigate('mostpopular')} />
-        <CategoryChips />
-        <FlatList
-          scrollEnabled={false}
-          data={getProductsListData?.data?.slice(0, 4)}
-          keyExtractor={(item) => item.id.toString() + item.title}
-          numColumns={2}
-          contentContainerStyle={{
-            paddingTop: 8,
-          }}
-          columnWrapperStyle={{
-            justifyContent: 'space-between',
-          }}
-          renderItem={({ item }) => (
-            <ProductCard
-              title={item?.name}
-              price={item?.price}
-              oldPrice={item?.original_price}
-              reviews_count={item?.reviews_count}
-              image={{ uri: item?.image_url }}
-              isFavorite={item?.isFavorite}
-              product={item}
-            // onAddToCart={handleAddToCart}
-            />
-          )}
-        />
+          <HomeSeeAll title='Most Popular' onPress={() => (navigation as any).navigate('mostpopular')} />
+          <CategoryChips />
+          <FlatList
+            scrollEnabled={false}
+            data={getProductsListData?.data?.slice(0, 4)}
+            keyExtractor={(item) => item.id.toString() + item.title}
+            numColumns={2}
+            contentContainerStyle={{
+              paddingTop: 8,
+            }}
+            columnWrapperStyle={{
+              justifyContent: 'space-between',
+            }}
+            renderItem={({ item }) => (
+              <ProductCard
+                title={item?.name}
+                price={item?.price}
+                oldPrice={item?.original_price}
+                reviews_count={item?.reviews_count}
+                image={{ uri: item?.image_url }}
+                isFavorite={item?.isFavorite}
+                product={item}
+              // onAddToCart={handleAddToCart}
+              />
+            )}
+          />
 
-        <PromoBanner itemImg={products[0]?.image} />
+          <PromoBanner itemImg={products[0]?.image} />
 
-        <HomeSeeAll title='Featured products' onPress={() => console.log('Featured products')} />
-        <FlatList
-          data={products}
-          horizontal
-          keyExtractor={(item) => item.id.toString() + item.title}
-          contentContainerStyle={{
-            paddingTop: 8,
-          }}
-          renderItem={({ item }) => (
-            <ProductCard
-              title={item?.title}
-              price={item?.price}
-              oldPrice={item?.originalPrice}
-              offer={item?.discount}
-              image={{ uri: item?.image }}
-              isFavorite={item?.isFavorite}
-              product={item}
-            // onAddToCart={handleAddToCart}
-            />
-          )}
-        />
+          <HomeSeeAll title='Featured products' onPress={() => console.log('Featured products')} />
+          <FlatList
+            data={products}
+            horizontal
+            keyExtractor={(item) => item.id.toString() + item.title}
+            contentContainerStyle={{
+              paddingTop: 8,
+            }}
+            renderItem={({ item }) => (
+              <ProductCard
+                title={item?.title}
+                price={item?.price}
+                oldPrice={item?.originalPrice}
+                offer={item?.discount}
+                image={{ uri: item?.image }}
+                isFavorite={item?.isFavorite}
+                product={item}
+              // onAddToCart={handleAddToCart}
+              />
+            )}
+          />
 
-        <SummerSaleBanner />
+          <SummerSaleBanner />
 
         </ScrollView>
       )}

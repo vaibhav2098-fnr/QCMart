@@ -9,6 +9,7 @@ const initialState = {
   isSignUpFailure: false,
   signUpData: {},
   errorMsg: "",
+  validationErrors: {},
 };
 // Create the slice
 export const signUpDataSlice = createSlice({
@@ -21,6 +22,7 @@ export const signUpDataSlice = createSlice({
       state.isSignUpSuccess = false;
       state.isSignUpFailure = false;
       state.errorMsg = null;
+      state.validationErrors = {};
     },
     // signUpData Success
     signUpDataSuccess: (state, action) => {
@@ -28,6 +30,7 @@ export const signUpDataSlice = createSlice({
       state.isSignUpSuccess = true;
       state.isSignUpFailure = false;
       state.errorMsg = null;
+      state.validationErrors = {};
       state.signUpData = action?.payload?.data;
     },
     // signUpData Failure
@@ -36,6 +39,7 @@ export const signUpDataSlice = createSlice({
       state.isSignUpSuccess = false;
       state.isSignUpFailure = true;
       state.errorMsg = action.payload.message;
+      state.validationErrors = action.payload.errors || {};
     },
     signUpDataReset: (state) => {
       state.isSignUpLoading = false;
@@ -43,6 +47,7 @@ export const signUpDataSlice = createSlice({
       state.isSignUpFailure = false;
       state.signUpData = {};
       state.errorMsg = '';
+      state.validationErrors = {};
     },
   },
 });

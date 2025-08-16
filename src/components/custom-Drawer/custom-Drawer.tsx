@@ -14,6 +14,7 @@ import { Icons } from '../../assets/qcIcons/qcIcons';
 import { moderateScale } from '../../utils/deviceConfig';
 import { useDispatch } from 'react-redux';
 import { signInDataReset } from '../../redux/reducers/auth-module/sign-in-screen';
+import { signUpDataReset } from '../../redux/reducers/auth-module/sign-up-screen';
 
 const { width: screenWidth } = Dimensions.get('window');
 const DRAWER_WIDTH = screenWidth * 0.8;
@@ -175,7 +176,10 @@ const CustomDrawer: React.FC<DrawerProps> = ({ isVisible, onClose }) => {
 
         {/* Footer */}
         <View style={styles.drawerFooter}>
-          <TouchableOpacity style={styles.signInButton} onPress={()=>dispatch(signInDataReset())}>
+          <TouchableOpacity style={styles.signInButton} onPress={() => {
+            dispatch(signInDataReset())
+            dispatch(signUpDataReset())
+          }}>
             <Image source={Icons['fi-rr-sign-out']} style={{ height: moderateScale(24), width: moderateScale(24) }} />
             <Text style={styles.signInText}>Logout</Text>
           </TouchableOpacity>
