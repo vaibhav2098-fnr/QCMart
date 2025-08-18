@@ -26,10 +26,20 @@ export const styles = StyleSheet.create({
     backgroundColor: '#F1F5F9',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#F1F5F9',
+
   },
-  avatarImage: {
+  avatarDefaultImage: {
     height: moderateScale(64),
     width: moderateScale(64),
+    borderRadius: moderateScale(64),
+    resizeMode: 'contain',
+  },
+  avatarImage: {
+    height: moderateScale(118),
+    width: moderateScale(118),
+    borderRadius: moderateScale(118),
     resizeMode: 'contain',
   },
   editBadge: {
@@ -47,7 +57,7 @@ export const styles = StyleSheet.create({
     fontSize: moderateScale(14),
     color: '#09090A',
     marginTop: moderateScale(6),
-    fontWeight:'400'
+    fontWeight: '400'
   },
   sectionSpacer: {
     height: moderateScale(8),
@@ -61,7 +71,17 @@ export const styles = StyleSheet.create({
     fontSize: moderateScale(12),
     color: '#ff4d4f',
     textAlign: 'left',
-},
+  },
+  footer: {
+    backgroundColor: '#fff',
+    paddingHorizontal: moderateScale(20),
+    paddingVertical: moderateScale(8),
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
 });
 
 

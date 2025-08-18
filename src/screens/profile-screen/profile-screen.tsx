@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { Image, ScrollView, Text, TouchableOpacity, View, Platform, ViewStyle, TextStyle, PermissionsAndroid } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
 import { useFormik } from 'formik';
+import React, { useEffect, useState } from 'react';
+import { Image, Platform, ScrollView, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 import * as Yup from 'yup';
 
-import CustomHeader from '../../components/custom-header/custom-header';
-import CustomInput from '../../components/custom-Input/input-field';
-import CustomButton from '../../components/custom-Button/button';
-import { Icons } from '../../assets/qcIcons/qcIcons';
-import { styles } from './profile-styles';
-import { moderateScale } from '../../utils/deviceConfig';
-import DropdownMenu from '../../components/custom-scrollable-dropdown/custom-scrollable-dropdown.component';
+import * as ImagePicker from 'expo-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
-import { profileDataRequest } from '../../redux/reducers/profile';
+import { Icons } from '../../assets/qcIcons/qcIcons';
+import CustomButton from '../../components/custom-Button/button';
+import CustomInput from '../../components/custom-Input/input-field';
+import CustomHeader from '../../components/custom-header/custom-header';
+import DropdownMenu from '../../components/custom-scrollable-dropdown/custom-scrollable-dropdown.component';
 import { RootState } from '../../redux/reducers';
+import { profileDataRequest } from '../../redux/reducers/profile';
+import { moderateScale } from '../../utils/deviceConfig';
+import { styles } from './profile-styles';
 
 const ProfileSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
@@ -35,7 +36,7 @@ const ProfileScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch()
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<any>('https://images.unsplash.com/photo-1494790108377-be9c29b29330?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlciUyMHByb2ZpbGV8ZW58MHx8MHx8fDA%3D'); // 👈 added
+  const [selectedImage, setSelectedImage] = useState<any>(''); // 👈 added
   const { token } = useSelector((state: RootState) => state?.signInDataReducer);
   const { profileData } = useSelector((state: RootState) => state.profileDataReducer);
   const { profile } = profileData
@@ -72,6 +73,28 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
+  const pickImage = async () => {
+    // Ask for permission (required on iOS & Android 13+)
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      alert("You need to allow permission to access photos");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: !true,
+      aspect: [1, 1], // square crop for profile picture
+      quality: 0.7,
+    });
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0]); // ✅ update state
+    }
+  };
+
+
   return (
     <View style={styles.container}>
       <CustomHeader
@@ -91,10 +114,10 @@ const ProfileScreen: React.FC = () => {
                   ? { uri: selectedImage.uri }
                   : Icons['fi-rr-man-head']
               }
-              style={styles.avatarImage}
+              style={selectedImage ? styles.avatarImage : styles.avatarDefaultImage}
             />
           </View>
-          <TouchableOpacity style={styles.editBadge} onPress={()=>console.log('pickImage')}>
+          <TouchableOpacity style={styles.editBadge} onPress={pickImage}>
             <Image
               source={Icons['fi-rr-edit']}
               style={{
@@ -234,12 +257,14 @@ const ProfileScreen: React.FC = () => {
         )}
 
         {/* Submit button */}
+      </ScrollView>
+      <View style={styles.footer}>
         <CustomButton
           title="Update"
           onPress={formik.handleSubmit as any}
           containerStyle={styles.updateButton}
         />
-      </ScrollView>
+      </View>
     </View>
   );
 };

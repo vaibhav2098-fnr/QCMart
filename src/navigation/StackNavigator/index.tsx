@@ -1,8 +1,8 @@
-import React from 'react';
 import { NativeStackNavigationOptions, createNativeStackNavigator } from '@react-navigation/native-stack';
-import { CategoryScreen, HomeScreen, LoginScreen, MostPopularScreen, OTPScreen, ProductDetailScreen, SignUpScreen, CartScreen, CheckoutScreen, ShippingAddressScreen, ChooseShippingScreen, AddPromoScreen, NotificationScreen, ProductCategoriesScreen, WebViewScreen, ProfileScreen, MyOrdersScreen, TrackOrderScreen, ForgotPasswordScreen } from '../../screens';
-import BottomTabNavigator from '../BottomTabNavigator';
+import React from 'react';
+import { AddPromoScreen, CartScreen, CategoryScreen, CheckoutScreen, ChooseShippingScreen, ForgotPasswordScreen, HomeScreen, LoginScreen, MostPopularScreen, MyOrdersScreen, NotificationScreen, OTPScreen, ProductCategoriesScreen, ProductDetailScreen, ProfileScreen, ShippingAddressScreen, SignUpScreen, TrackOrderScreen, WebViewScreen } from '../../screens';
 import ComingSoonScreen from '../../screens/comingsoon-screen/comingsoon-screen';
+import BottomTabNavigator from '../BottomTabNavigator';
 
 const Stack = createNativeStackNavigator();
 
