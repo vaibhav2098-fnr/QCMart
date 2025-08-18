@@ -5,15 +5,14 @@
  * @format
  */
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import Navigation from './src/navigation';
-import configureStore from './src/redux/store';
+import Navigation from '@/src/navigation';
+import configureStore from '@/src/redux/store';
+import { StatusBar, StyleSheet } from 'react-native';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 const { store, persistor } = configureStore();
 
-function App() {
+export default function RootLayout() {
 
   return (
     <Provider store={store}>
@@ -31,4 +30,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;

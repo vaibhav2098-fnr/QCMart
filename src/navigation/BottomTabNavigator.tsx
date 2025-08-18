@@ -1,19 +1,19 @@
 // CustomBottomTabs.tsx
 import React, { useRef, useState } from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
   Animated,
-  StyleSheet,
   Dimensions,
   Image,
   Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { moderateScale } from '../utils/deviceConfig';
 import { Icons } from '../assets/qcIcons/qcIcons';
-import { HomeScreen, CartScreen, CategoryScreen } from '../screens';
+import { CartScreen, HomeScreen } from '../screens';
 import ComingSoonScreen from '../screens/comingsoon-screen/comingsoon-screen';
+import { moderateScale } from '../utils/deviceConfig';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
