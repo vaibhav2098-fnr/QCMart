@@ -10,7 +10,6 @@ import {
     View
 } from 'react-native';
 import { moderateScale } from '../../utils/deviceConfig';
-import { IMG } from '../../assets/qcImages/qxImages';
 
 const { width } = Dimensions.get('window');
 
@@ -88,12 +87,12 @@ export default CustomCarousel;
 
 const styles = StyleSheet.create({
     card: {
-        width: ITEM_WIDTH * 0.92,
+        width: ITEM_WIDTH * 0.865,
         flexDirection: 'row',
         backgroundColor: '#00214d',
         borderRadius: moderateScale(20),
         padding: moderateScale(20),
-        marginRight: moderateScale(16),
+        marginHorizontal: moderateScale(10),
         alignItems: 'center',
         justifyContent: 'space-between',
         marginTop: moderateScale(16)

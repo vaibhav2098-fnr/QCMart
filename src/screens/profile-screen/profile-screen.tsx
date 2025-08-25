@@ -1,11 +1,13 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
 import { useFormik } from 'formik';
-import React, { useEffect, useState } from 'react';
-import { Image, Platform, ScrollView, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { Image, Platform, SafeAreaView, ScrollView, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 import * as Yup from 'yup';
 
+import RBBottomSheet from '@/src/components/custom-BottomSheet/custom-BottomSheet';
 import * as ImagePicker from 'expo-image-picker';
+import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { Icons } from '../../assets/qcIcons/qcIcons';
 import CustomButton from '../../components/custom-Button/button';
@@ -35,22 +37,19 @@ const options = [
 const ProfileScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch()
+  const bottomSheetRef = useRef(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedImage, setSelectedImage] = useState<any>(''); // 👈 added
   const { token } = useSelector((state: RootState) => state?.signInDataReducer);
   const { profileData } = useSelector((state: RootState) => state.profileDataReducer);
   const { profile } = profileData
 
-  useEffect(() => {
-    dispatch(profileDataRequest({ token: token }))
-  }, [dispatch, token])
-
   const formik = useFormik({
     initialValues: {
       name: profile?.name || '',
       email: profile?.email || '',
       phone: profile?.phone || '',
-      dob: profile?.dob || '',
+      dob: moment(profile?.dob ).format("YYYY-MM-DD")|| '',
       gender: options[0],  //need to add
       location: '',  //need to add
     },
@@ -73,30 +72,82 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
-  const pickImage = async () => {
-    // Ask for permission (required on iOS & Android 13+)
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
+  // 👇 New functions
+  const openCamera = async () => {
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
     if (!permissionResult.granted) {
-      alert("You need to allow permission to access photos");
+      alert("Camera permission is required!");
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: !true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0]);
+    }
+  };
+
+  const openGallery = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      alert("Gallery permission is required!");
       return;
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: !true,
-      aspect: [1, 1], // square crop for profile picture
+      aspect: [1, 1],
       quality: 0.7,
     });
 
     if (!result.canceled) {
-      setSelectedImage(result.assets[0]); // ✅ update state
+      setSelectedImage(result.assets[0]);
     }
   };
 
+  const bottomSheet = () => {
+    const options = [
+      { label: "Camera", icon: Icons['fi-rr-camera'], action: openCamera },
+      { label: "Gallery", icon: Icons['fi-rr-gallery'], action: openGallery },
+    ];
+
+    return (
+      <View style={{ padding: moderateScale(12) }}>
+        <Text style={{ fontSize: moderateScale(18), fontWeight: "600", marginBottom: moderateScale(12) }}>
+          Select any to add a display on your profile.
+        </Text>
+
+        {options.map((item, index) => (
+          <View key={item.label}>
+            <TouchableOpacity
+              style={{ flexDirection: "row", alignItems: "center", paddingVertical: moderateScale(12), paddingHorizontal: moderateScale(16) }}
+              onPress={() => {
+                bottomSheetRef?.current?.close();
+                item.action();
+              }}
+            >
+              <Image source={item.icon} style={{ height: moderateScale(22), width: moderateScale(22), marginRight: moderateScale(12) }} />
+              <Text style={{ fontSize: moderateScale(16) }}>{item.label}</Text>
+            </TouchableOpacity>
+            {index < options.length - 1 && (
+              <View style={{ height: 1, backgroundColor: "#ddd" }} />
+            )}
+          </View>
+        ))}
+      </View>
+    );
+  };
+
+
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <CustomHeader
         onBack={() => (navigation as any).goBack()}
         title="Profile"
@@ -117,7 +168,7 @@ const ProfileScreen: React.FC = () => {
               style={selectedImage ? styles.avatarImage : styles.avatarDefaultImage}
             />
           </View>
-          <TouchableOpacity style={styles.editBadge} onPress={pickImage}>
+          <TouchableOpacity style={styles.editBadge} onPress={() => bottomSheetRef?.current?.open()}>
             <Image
               source={Icons['fi-rr-edit']}
               style={{
@@ -261,11 +312,17 @@ const ProfileScreen: React.FC = () => {
       <View style={styles.footer}>
         <CustomButton
           title="Update"
-          onPress={formik.handleSubmit as any}
+          onPress={() => formik.handleSubmit()}
           containerStyle={styles.updateButton}
         />
       </View>
-    </View>
+      <RBBottomSheet
+        ref={bottomSheetRef}
+        customHeight={moderateScale(140)}
+        child={<>{bottomSheet()}</>}
+        containerStyle={$bottomSheetStyle}
+      />
+    </SafeAreaView>
   );
 };
 
@@ -311,4 +368,13 @@ const $button: TextStyle = {
   width: '100%',
   backgroundColor: '#fff',
   borderRadius: moderateScale(12),
+}
+
+const $bottomSheetStyle: ViewStyle = {
+  borderWidth: 1,
+  paddingHorizontal: moderateScale(16),
+  borderColor: '#EEEEEE',
+  height: 'auto',
+  paddingVertical: moderateScale(16),
+  bottom: -moderateScale(26)
 }

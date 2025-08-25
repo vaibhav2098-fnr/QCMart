@@ -1,19 +1,16 @@
+import FilterBottomSheet from '@/src/components/custom-Filter-BottomSheet.tsx/custom-filterBottomSheet'
+import { useNavigation } from '@react-navigation/native'
 import React, { useMemo, useRef, useState } from 'react'
-import { FlatList, Image, SafeAreaView, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native'
+import { useSelector } from 'react-redux'
+import { Icons } from '../../assets/qcIcons/qcIcons'
+import CustomInput from '../../components/custom-Input/input-field'
+import NotFoundPage from '../../components/custom-NotFoundPage/not-FoundPage'
 import ProductCard from '../../components/custom-ProductCard/product-Card'
 import CustomHeader from '../../components/custom-header/custom-header'
-import { useNavigation } from '@react-navigation/native'
-import { statusBarHeight } from '../../utils/helper'
-import { moderateScale } from '../../utils/deviceConfig'
-import CustomInput from '../../components/custom-Input/input-field'
-import { Icons } from '../../assets/qcIcons/qcIcons'
-import CategoryChips from '../../components/custom-Chips/category-Chips'
-import RBBottomSheet from '../../components/custom-BottomSheet/custom-BottomSheet'
-import { styles } from './most-popular-styles'
-import CustomButton from '../../components/custom-Button/button'
-import NotFoundPage from '../../components/custom-NotFoundPage/not-FoundPage'
 import { RootState } from '../../redux/reducers'
-import { useSelector } from 'react-redux'
+import { moderateScale } from '../../utils/deviceConfig'
+import { statusBarHeight } from '../../utils/helper'
 
 const MostPopularScreen = () => {
     const navigation = useNavigation()
@@ -22,6 +19,7 @@ const MostPopularScreen = () => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [selectedSort, setSelectedSort] = useState('Most Recent');
     const [selectedRating, setSelectedRating] = useState('All');
+    const [range, setRange] = useState([100, 590]);
     const { getProductsListData } = useSelector((state: RootState) => state.getProductsListDataReducer);
 
     const resetFilter = () => {
@@ -127,44 +125,20 @@ const MostPopularScreen = () => {
                     )}
                 />
             )}
-            <RBBottomSheet
+            <FilterBottomSheet
                 ref={bottomSheetRef}
-                child={
-                    <View style={{}}>
-                        <Text style={styles.sheetTitle}>Sort & Filter</Text>
-                        <View style={styles.dividerLine} />
-
-                        {/* Categories */}
-                        <Text style={styles.sectionTitle}>Categories</Text>
-                        <CategoryChips data={['All', 'Computer', 'Laptop', 'Accessories']} selected={selectedCategory || 'All'} setSelected={setSelectedCategory} />
-
-                        {/* Price Range */}
-                        <Text style={styles.sectionTitle}>Price Range</Text>
-                        <View style={styles.priceRangeTextContainer}>
-                            <Text style={styles.priceText}>₹100</Text>
-                            <Text style={styles.priceText}>₹590</Text>
-                        </View>
-
-                        {/* Sort By */}
-                        <Text style={styles.sectionTitle}>Sort By</Text>
-                        <CategoryChips data={['Popular', 'Most Recent', 'Price High', 'Low to High']} selected={selectedSort || 'Popular'} setSelected={setSelectedSort} />
-
-                        {/* Rating */}
-                        <Text style={styles.sectionTitle}>Rating</Text>
-                        <CategoryChips data={['All', '5', '4', '3', '2']} extraString={'⭐'} selected={selectedRating || 'All'} setSelected={setSelectedRating} />
-                        <View style={styles.dividerLine} />
-                        {/* Buttons */}
-                        <View style={styles.buttonRow}>
-                            <CustomButton disabled title='Reset' onPress={resetFilter} containerStyle={{ width: '48%', height: moderateScale(50), borderRadius: 28 }} />
-                            <CustomButton title='Apply' onPress={applyFilter} containerStyle={{ width: '48%', height: moderateScale(50), borderRadius: 28 }} />
-                        </View>
-                    </View>
-                }
-                customHeight={480}
-                closeOnDragDown
-                withCloseButton={false}
-                containerStyle={styles.bottomSheetStyle}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+                selectedSort={selectedSort}
+                setSelectedSort={setSelectedSort}
+                selectedRating={selectedRating}
+                setSelectedRating={setSelectedRating}
+                range={range}
+                setRange={setRange}
+                onApply={applyFilter}
+                onReset={resetFilter}
             />
+
         </View>
     )
 }

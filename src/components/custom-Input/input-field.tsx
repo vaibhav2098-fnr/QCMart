@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Image, StyleSheet, Text, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
-import { moderateScale } from '../../utils/deviceConfig';
 import { Icons } from '../../assets/qcIcons/qcIcons';
+import { moderateScale } from '../../utils/deviceConfig';
 
 interface Props extends TextInputProps {
     value: string;
@@ -96,7 +96,7 @@ const CustomInput: React.FC<Props> = ({
                 )}
             </View>
 
-            {isShowError? (
+            {errorMessage? (
                 <Text style={styles.errorText}>{errorMessage}</Text>
             ) : null}
         </View>

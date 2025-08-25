@@ -33,8 +33,8 @@ const CustomPopup: React.FC<Props> = ({
   message = '',
   position = 'top',
 }) => {
-  const [show, setShow] = useState(visible);
   const slideAnim = useRef(new Animated.Value(0)).current;
+  const [show, setShow] = useState(visible);
 
   const { color } = iconMap[type];
 

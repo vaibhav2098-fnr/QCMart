@@ -8,6 +8,7 @@ import { AuthNavigator, HomeNavigator } from './StackNavigator';
 const MainStack = createNativeStackNavigator();
 const Navigation: React.FC = () => {
   const { token } = useSelector((state: RootState) => state?.signInDataReducer);
+  console.log("🚀 ~ Navigation ~ token:", token)
 
   return (
     <>

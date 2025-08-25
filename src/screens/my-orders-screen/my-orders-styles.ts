@@ -1,6 +1,6 @@
+import { statusBarHeight } from '@/src/utils/helper';
 import { StyleSheet } from 'react-native';
 import { moderateScale } from '../../utils/deviceConfig';
-import { statusBarHeight } from '../../utils/helper';
 
 export const styles = StyleSheet.create({
   container: {
@@ -82,7 +82,7 @@ export const styles = StyleSheet.create({
     borderRadius: moderateScale(8),
     paddingHorizontal: moderateScale(10),
     paddingVertical: moderateScale(6),
-    width:moderateScale(80)
+    width:moderateScale(70)
   },
   statusText: {
     color: '#041C45',
@@ -91,14 +91,76 @@ export const styles = StyleSheet.create({
     textAlign:'center'
   },
   trackButton: {
-    width: moderateScale(120),
+    width: moderateScale(100),
     height: moderateScale(34),
     borderRadius: moderateScale(24),
     backgroundColor: '#041C45',
   },
   trackButtonText: {
-    fontSize: moderateScale(12),
+    fontSize: moderateScale(10),
     fontWeight: '600',
+  },
+  orderId: {
+    fontSize: moderateScale(14),
+    color: '#041C45',
+    fontWeight: '700',
+    marginBottom: moderateScale(4),
+  },
+  customerName: {
+    fontSize: moderateScale(13),
+    color: '#09090A',
+    fontWeight: '600',
+    marginBottom: moderateScale(4),
+  },
+  shippingText: {
+    fontSize: moderateScale(11),
+    color: '#6B6E73',
+    fontWeight: '400',
+    marginTop: moderateScale(2),
+  },
+  initialLoading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: moderateScale(40),
+  },
+  loadingFooter: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: moderateScale(20),
+  },
+  loadingText: {
+    fontSize: moderateScale(14),
+    color: '#6B6E73',
+    fontWeight: '400',
+    marginLeft: moderateScale(8),
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: moderateScale(60),
+  },
+  emptyIcon: {
+    height: moderateScale(60),
+    width: moderateScale(60),
+    resizeMode: 'contain',
+    marginBottom: moderateScale(16),
+    opacity: 0.5,
+  },
+  emptyTitle: {
+    fontSize: moderateScale(16),
+    color: '#09090A',
+    fontWeight: '600',
+    marginBottom: moderateScale(8),
+  },
+  emptySubtitle: {
+    fontSize: moderateScale(14),
+    color: '#6B6E73',
+    fontWeight: '400',
+    textAlign: 'center',
+    paddingHorizontal: moderateScale(20),
   },
 });
 

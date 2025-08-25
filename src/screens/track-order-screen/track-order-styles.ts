@@ -38,7 +38,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: moderateScale(12),
+    marginBottom: moderateScale(6),
     width:'50%'
   },
   infoLabel: {
@@ -213,5 +213,59 @@ export const styles = StyleSheet.create({
     fontSize: moderateScale(18),
     fontWeight: '700',
     color: '#111827',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: moderateScale(40),
+  },
+  loadingText: {
+    fontSize: moderateScale(14),
+    color: '#6B6E73',
+    fontWeight: '400',
+    marginTop: moderateScale(16),
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: moderateScale(40),
+  },
+  errorIcon: {
+    height: moderateScale(60),
+    width: moderateScale(60),
+    resizeMode: 'contain',
+    marginBottom: moderateScale(16),
+    opacity: 0.5,
+  },
+  errorTitle: {
+    fontSize: moderateScale(16),
+    color: '#09090A',
+    fontWeight: '600',
+    marginBottom: moderateScale(8),
+  },
+  errorSubtitle: {
+    fontSize: moderateScale(14),
+    color: '#6B6E73',
+    fontWeight: '400',
+    textAlign: 'center',
+    paddingHorizontal: moderateScale(20),
+  },
+  emailContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: moderateScale(12),
+  },
+  emailIcon: {
+    width: moderateScale(14),
+    height: moderateScale(14),
+    marginRight: moderateScale(8),
+    tintColor: '#6B6E73',
+  },
+  emailText: {
+    fontSize: moderateScale(10),
+    color: '#8C949D',
+    fontWeight: '400',
   },
 });

@@ -1,22 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import CustomInput from '@/src/components/custom-Input/input-field';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
+  Animated,
+  FlatList,
+  Image,
+  RefreshControl,
   SafeAreaView,
   StatusBar,
+  StyleSheet,
+  Text,
   TouchableOpacity,
-  Image,
-  FlatList,
-  RefreshControl,
+  View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 import { Icons } from '../../assets/qcIcons/qcIcons';
+import ProductCard from '../../components/custom-ProductCard/product-Card';
+import { RootState } from '../../redux/reducers';
 import { moderateScale } from '../../utils/deviceConfig';
 import { statusBarHeight } from '../../utils/helper';
-import ProductCard from '../../components/custom-ProductCard/product-Card';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/reducers';
 
 interface Product {
   id: number;
@@ -71,16 +73,42 @@ const ProductCategoriesScreen: React.FC<ProductCategoriesScreenProps> = ({ route
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMoreData, setHasMoreData] = useState(true);
 
+  const [search, setSearch] = useState('');
+  const [searchVisible, setSearchVisible] = useState(false); // 👈 toggle state
+  const searchAnim = useRef(new Animated.Value(0)).current;
+
   const categoryId = route?.params?.categoryId;
   const categoryName = route?.params?.categoryName || 'Products';
-  const {categoriesProductListDataData} = useSelector((state: RootState) => state.categoriesProductListDataDataReducer);
+  const { categoriesProductListDataData } = useSelector((state: RootState) => state.categoriesProductListDataDataReducer);
+
+  const { productCategoriesData = [] } = useSelector(
+    (state: RootState) => state.productCategoriesDataReducer
+  );
+
+  // 📦 Animate search bar
+  useEffect(() => {
+    Animated.timing(searchAnim, {
+      toValue: searchVisible ? 1 : 0,
+      duration: 250,
+      useNativeDriver: false,
+    }).start();
+  }, [searchVisible]);
+
+  // 🔍 Filtered categories (case-insensitive match)
+  const filteredCategories = useMemo(() => {
+    const keyword = search.trim().toLowerCase();
+    if (!keyword) return products;
+    return products.filter((item) =>
+      item.name?.toLowerCase().includes(keyword)
+    );
+  }, [search, products]);
 
   const fetchProducts = async (page: number = 1, isRefresh: boolean = false) => {
     try {
       setLoading(true);
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
-  
+
       if (categoriesProductListDataData?.error) {
         console.error('API Error:', categoriesProductListDataData?.message);
         return;
@@ -135,7 +163,13 @@ const ProductCategoriesScreen: React.FC<ProductCategoriesScreenProps> = ({ route
         <Image source={Icons['fi-rr-angle-left']} style={styles.backIcon} />
       </TouchableOpacity>
       <Text style={styles.headerTitle}>{categoryName}</Text>
-      <View style={styles.placeholder} />
+      {/* <View style={styles.placeholder} /> */}
+      <TouchableOpacity onPress={() => {
+        if (searchVisible) setSearch(''); // optional: clear input
+        setSearchVisible(!searchVisible);
+      }} style={styles.backButton}>
+        <Image source={Icons[searchVisible ? 'fi-rr-cross' : 'fi-rr-search']} style={styles.backIcon} />
+      </TouchableOpacity>
     </View>
   );
 
@@ -152,11 +186,32 @@ const ProductCategoriesScreen: React.FC<ProductCategoriesScreenProps> = ({ route
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      
+
       {renderHeader()}
+      {/* 🔍 Animated Search Input */}
+      <Animated.View
+        style={{
+          height: searchAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, moderateScale(60)],
+          }),
+          overflow: 'hidden',
+          marginBottom: moderateScale(8),
+          marginHorizontal:moderateScale(16)
+        }}
+      >
+        <CustomInput
+          customPlaceholder="Search..."
+          value={search}
+          secureTextEntry={false}
+          onChangeText={(txt) => setSearch(txt)}
+          leftIcon={<></>}
+          rightIcon={<></>}
+        />
+      </Animated.View>
 
       <FlatList
-        data={products}
+        data={filteredCategories}
         renderItem={renderProduct}
         keyExtractor={(item) => item.id.toString()}
         numColumns={2}

@@ -1,3 +1,5 @@
+import ChangePasswordScreen from '@/src/screens/change-password';
+import DrawerScreen from '@/src/screens/custom-Drawer/drawer-screen';
 import { NativeStackNavigationOptions, createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { AddPromoScreen, CartScreen, CategoryScreen, CheckoutScreen, ChooseShippingScreen, ForgotPasswordScreen, HomeScreen, LoginScreen, MostPopularScreen, MyOrdersScreen, NotificationScreen, OTPScreen, ProductCategoriesScreen, ProductDetailScreen, ProfileScreen, ShippingAddressScreen, SignUpScreen, TrackOrderScreen, WebViewScreen } from '../../screens';
@@ -33,6 +35,10 @@ export const HomeNavigator: React.FC = () => {
         } as NativeStackNavigationOptions
       }>
       <Stack.Screen name="MainTabs" component={BottomTabNavigator} />
+      <Stack.Screen name="drawer" component={DrawerScreen} options={{
+        presentation: 'containedTransparentModal',
+        animation: 'slide_from_left',
+      }} />
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Cart" component={CartScreen} />
       <Stack.Screen name="category" component={CategoryScreen} />
@@ -49,6 +55,7 @@ export const HomeNavigator: React.FC = () => {
       <Stack.Screen name="profile" component={ProfileScreen} />
       <Stack.Screen name="myOrders" component={MyOrdersScreen} />
       <Stack.Screen name="trackOrder" component={TrackOrderScreen} />
+      <Stack.Screen name="changePassword" component={ChangePasswordScreen} />
     </Stack.Navigator>
   );
 };
