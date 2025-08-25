@@ -1,23 +1,22 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
-import CustomHeader from '../../components/custom-header/custom-header';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Animated,
   FlatList,
   Image,
   SafeAreaView,
   Text,
-  TouchableOpacity,
-  View,
-  Animated,
+  View
 } from 'react-native';
-import { statusBarHeight, transformIconName } from '../../utils/helper';
-import { moderateScale } from '../../utils/deviceConfig';
-import CategoryItem from '../../components/custom-category/custom-category';
-import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../redux/reducers';
 import { Icons } from '../../assets/qcIcons/qcIcons';
 import CustomInput from '../../components/custom-Input/input-field';
+import CategoryItem from '../../components/custom-category/custom-category';
+import CustomHeader from '../../components/custom-header/custom-header';
+import { RootState } from '../../redux/reducers';
 import { categoriesProductListDataDataRequest } from '../../redux/reducers/categories-products-list';
+import { moderateScale } from '../../utils/deviceConfig';
+import { statusBarHeight, transformIconName } from '../../utils/helper';
 
 const CategoryScreen = () => {
   const navigation = useNavigation();

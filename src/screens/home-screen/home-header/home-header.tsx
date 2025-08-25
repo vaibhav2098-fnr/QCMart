@@ -1,21 +1,15 @@
-import React, { useState } from 'react';
-import { Image, View, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { Image, TouchableOpacity, View } from 'react-native';
 import { Icons } from '../../../assets/qcIcons/qcIcons';
 import { IMG } from '../../../assets/qcImages/qxImages';
 import { styles } from './home-header-styles';
-import { useNavigation } from '@react-navigation/native';
-import { CustomDrawer } from '../../../components/custom-Drawer';
 
 const HomeHeader = () => {
     const navigation = useNavigation();
-    const [isDrawerVisible, setIsDrawerVisible] = useState(false);
 
     const openDrawer = () => {
-        setIsDrawerVisible(true);
-    };
-
-    const closeDrawer = () => {
-        setIsDrawerVisible(false);
+        navigation.navigate('drawer')
     };
 
     return (
@@ -39,7 +33,7 @@ const HomeHeader = () => {
             </View>
 
             {/* Custom Drawer */}
-            <CustomDrawer isVisible={isDrawerVisible} onClose={closeDrawer} />
+            {/* <CustomDrawer isVisible={isDrawerVisible} onClose={closeDrawer} /> */}
         </>
     );
 };

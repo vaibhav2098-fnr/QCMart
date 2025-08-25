@@ -1,8 +1,9 @@
+import { getDeviceWidth } from '@/src/utils/helper';
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { moderateScale } from '../../utils/deviceConfig';
 import { Icons } from '../../assets/qcIcons/qcIcons';
+import { moderateScale } from '../../utils/deviceConfig';
 
 const ProductCard = (props: any) => {
     const navigation = useNavigation();
@@ -18,14 +19,14 @@ const ProductCard = (props: any) => {
     } = props;
 
     return (
-        <TouchableOpacity 
+        <TouchableOpacity
             style={styles.card}
             onPress={() => (navigation as any).navigate('productDetail', { product: product || { title, price, oldPrice, reviews_count, image, isFavorite } })}
         >
             <View style={styles.imageContainer}>
                 <Image source={image} style={styles.productImage} resizeMode="contain" />
 
-                <TouchableOpacity 
+                <TouchableOpacity
                     style={styles.heartIcon}
                     onPress={(e) => {
                         e.stopPropagation();
@@ -41,9 +42,11 @@ const ProductCard = (props: any) => {
             <View style={styles.priceContainer}>
                 <Text style={styles.price}>₹{price}</Text>
                 {oldPrice ? <Text style={styles.oldPrice}>₹{oldPrice}</Text> : null}
-                <Text style={styles.reviews_count}> <Image source={Icons['fi-rr-star']} style={styles.starIcon} /> ({reviews_count})</Text>
+                {reviews_count ?
+                    <Text style={styles.reviews_count}> <Image source={Icons['fi-rr-star']} style={styles.starIcon} /> ({reviews_count})</Text>
+                    : null}
             </View>
-            
+
             {/* <TouchableOpacity 
                 style={styles.addToCartButton}
                 onPress={(e) => {
@@ -65,7 +68,7 @@ export default ProductCard;
 
 const styles = StyleSheet.create({
     card: {
-        width: moderateScale(170),
+        width: getDeviceWidth() * 0.42,
         height: moderateScale(230),
         backgroundColor: '#fff',
         borderRadius: moderateScale(12),
@@ -116,7 +119,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: moderateScale(6),
-        flexWrap:'wrap',
+        flexWrap: 'wrap',
     },
     price: {
         fontSize: moderateScale(16),
@@ -140,7 +143,7 @@ const styles = StyleSheet.create({
         height: moderateScale(14),
         tintColor: '#1e90ff',
         marginRight: moderateScale(4),
-      }
+    }
     // addToCartButton: {
     //     backgroundColor: '#25D366',
     //     borderRadius: moderateScale(6),

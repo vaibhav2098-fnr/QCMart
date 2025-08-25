@@ -1,33 +1,43 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import FilterBottomSheet from '@/src/components/custom-Filter-BottomSheet.tsx/custom-filterBottomSheet';
+import { profileDataRequest } from '@/src/redux/reducers/profile';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, Image, ScrollView, TouchableOpacity, View } from 'react-native';
-import HomeHeader from './home-header/home-header';
-import { statusBarHeight, transformIconName, performSearch } from '../../utils/helper';
-import { moderateScale } from '../../utils/deviceConfig';
-import CustomInput from '../../components/custom-Input/input-field';
+import { useDispatch, useSelector } from 'react-redux';
 import { Icons } from '../../assets/qcIcons/qcIcons';
 import CustomCarousel from '../../components/custom-Carousel/carousel';
-import { DATA, products } from './dummy-data';
-import CategoryItem from '../../components/custom-category/custom-category';
-import HomeSeeAll from './home-see-all/home-see-all';
+import CustomInput from '../../components/custom-Input/input-field';
 import ProductCard from '../../components/custom-ProductCard/product-Card';
-import PromoBanner from './home-promo-banner/home-promo-banner';
-import SummerSaleBanner from './home-summerSaleBanner/home-summerSaleBanner';
-import { useNavigation } from '@react-navigation/native';
-import CategoryChips from '../../components/custom-Chips/category-Chips';
-import { useDispatch, useSelector } from 'react-redux';
-import { productCategoriesDataRequest } from '../../redux/reducers/product-categories';
+import SearchResults from '../../components/custom-SearchResults/custom-SearchResults';
+import CategoryItem from '../../components/custom-category/custom-category';
 import { RootState } from '../../redux/reducers';
 import { categoriesProductListDataDataRequest } from '../../redux/reducers/categories-products-list';
 import { getProductsListDataRequest } from '../../redux/reducers/get-products-list';
-import SearchResults from '../../components/custom-SearchResults/custom-SearchResults';
+import { productCategoriesDataRequest } from '../../redux/reducers/product-categories';
+import { moderateScale } from '../../utils/deviceConfig';
+import { performSearch, statusBarHeight, transformIconName } from '../../utils/helper';
+import { DATA, products } from './dummy-data';
+import HomeHeader from './home-header/home-header';
+import PromoBanner from './home-promo-banner/home-promo-banner';
+import HomeSeeAll from './home-see-all/home-see-all';
+import SummerSaleBanner from './home-summerSaleBanner/home-summerSaleBanner';
 
 const HomeScreen = () => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
   const { productCategoriesData = [] } = useSelector((state: RootState) => state.productCategoriesDataReducer);
   const { getProductsListData } = useSelector((state: RootState) => state.getProductsListDataReducer);
+  const { token } = useSelector((state: RootState) => state?.signInDataReducer);
+
+  //filter
+  const bottomSheetRef = useRef(null);
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedSort, setSelectedSort] = useState('Most Recent');
+  const [selectedRating, setSelectedRating] = useState('All');
+  const [range, setRange] = useState([100, 590]);
 
   useEffect(() => {
+    dispatch(profileDataRequest({ token: token }))
     dispatch(productCategoriesDataRequest({}));
     dispatch(getProductsListDataRequest({}));
   }, [dispatch]);
@@ -82,6 +92,19 @@ const HomeScreen = () => {
     setSearchQuery('');
   }
 
+  const applyFilter = () => {
+    // Add logic to apply selected filters
+    bottomSheetRef.current?.close();
+  };
+
+
+  const resetFilter = () => {
+    setSelectedCategory('All');
+    setSelectedSort('Most Recent');
+    setSelectedRating('All');
+  };
+
+
 
   return (
     <View style={{ flex: 1, marginTop: statusBarHeight, paddingHorizontal: moderateScale(16), backgroundColor: '#fff' }}>
@@ -92,20 +115,10 @@ const HomeScreen = () => {
         value={searchQuery}
         secureTextEntry={false}
         onChangeText={handleSearchChange}
-        leftIcon={<Image tintColor={'#8C949D'} source={Icons['fi-rr-search']} style={{ height: 24, width: 24, resizeMode: 'contain' }} />}
-        rightIcon={
-          searchQuery.length > 0 ? (
-            <TouchableOpacity onPress={handleClearSearch}>
-              <Image source={Icons['fi-rr-cross']} style={{ height: 24, width: 24, resizeMode: 'contain' }} />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity>
-              <Image source={Icons['fi-rr-filter']} style={{ height: 24, width: 24, resizeMode: 'contain' }} />
-            </TouchableOpacity>
-          )
-        }
+        leftIcon={<Image tintColor={'#8C949D'} source={Icons['fi-rr-search']} style={{ height: moderateScale(24), width: moderateScale(24), resizeMode: 'contain' }} />}
+        rightIcon={<TouchableOpacity onPress={() => bottomSheetRef.current?.open()}><Image source={Icons['fi-rr-filter']} style={{ height: moderateScale(18), width: moderateScale(18), resizeMode: 'contain' }} /></TouchableOpacity>}
       />
-      
+
       {searchQuery.length > 0 ? (
         <SearchResults
           searchQuery={searchQuery}
@@ -144,7 +157,7 @@ const HomeScreen = () => {
 
 
           <HomeSeeAll title='Most Popular' onPress={() => (navigation as any).navigate('mostpopular')} />
-          <CategoryChips />
+          {/* <CategoryChips /> */}
           <FlatList
             scrollEnabled={false}
             data={getProductsListData?.data?.slice(0, 4)}
@@ -195,9 +208,21 @@ const HomeScreen = () => {
           />
 
           <SummerSaleBanner />
-
         </ScrollView>
       )}
+      <FilterBottomSheet
+        ref={bottomSheetRef}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        selectedSort={selectedSort}
+        setSelectedSort={setSelectedSort}
+        selectedRating={selectedRating}
+        setSelectedRating={setSelectedRating}
+        range={range}
+        setRange={setRange}
+        onApply={applyFilter}
+        onReset={resetFilter}
+      />
     </View>
   );
 };

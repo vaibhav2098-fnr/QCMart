@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 import { moderateScale } from "../../utils/deviceConfig";
-import { getDeviceHeight, getDeviceWidth } from "../../utils/helper";
+import { getDeviceWidth } from "../../utils/helper";
 
 export const styles = StyleSheet.create({
     bottomSheetStyle: {
@@ -63,7 +63,6 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginTop: moderateScale(4),
-        backgroundColor: 'red'
     },
     priceText: {
         color: '#000',
@@ -93,5 +92,35 @@ export const styles = StyleSheet.create({
     applyText: {
         color: '#fff',
         fontWeight: '600',
+    },
+    priceBox: {
+        backgroundColor: "#001f4d",
+        paddingHorizontal: moderateScale(6),
+        paddingVertical: moderateScale(6),
+        borderRadius: moderateScale(6),
+        marginBottom: moderateScale(5),
+    },
+    priceText2: {
+        color: "#fff",
+        fontWeight: "600",
+        fontSize: 14,
+    },
+    thumbActive: {
+        height: moderateScale(28),
+        width: moderateScale(28),
+        borderRadius: moderateScale(14),
+        backgroundColor: "#001f4d",
+        borderWidth: moderateScale(3),
+        borderColor: "#fff",
+        marginBottom: moderateScale(32),
+    },
+    thumb: {
+        height: moderateScale(28),
+        width: moderateScale(28),
+        borderRadius: moderateScale(14),
+        backgroundColor: "#001f4d",
+        borderWidth: moderateScale(3),
+        borderColor: "#fff",
+        marginBottom: -moderateScale(4),
     },
 })

@@ -1,13 +1,12 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
+import { StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
 import { moderateScale } from '../../utils/deviceConfig';
-import { Icons } from '../../assets/qcIcons/qcIcons';
 
 interface Props {
     title: string;
     onPress: () => void;
     disabled?: boolean;
-    containerStyle?: ViewStyle;
+    containerStyle?: ViewStyle | ViewStyle[];
     textStyle?: TextStyle;
     icons?: React.ReactElement
 }
